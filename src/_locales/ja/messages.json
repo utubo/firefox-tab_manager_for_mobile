@@ -1,0 +1,32 @@
+{
+	"extensionName": {
+		"message": "タブマネージャー for Mobile",
+		"description": "Name of the extension."
+	},
+	"extensionDescription": {
+		"message": "タブを管理するページを提供します",
+		"description": "Description of the extension."
+	},
+	"closeThisTab": {
+		"message": "タブを閉じる"
+	},
+	"closeOtherTabs": {
+		"message": "他のタブを閉じる"
+	},
+	"cloneThisTab": {
+		"message": "タブを複製する"
+	},
+	"closeLeftTabsFromThis": {
+		"message": "左側(上側)のタブを閉じる"
+	},
+	"closeRightTabsFromThis": {
+		"message": "右側(下側)のタブを閉じる"
+	},
+	"copyTitleAndUrl": {
+		"message": "タイトルとURLをコピーする"
+	},
+	"copyTitleAndURLofAllCheckedTabs": {
+		"message": "チェックしたタブのタイトルとURLをコピーする"
+	}
+}
+

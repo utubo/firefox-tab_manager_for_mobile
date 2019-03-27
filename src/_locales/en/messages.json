@@ -1,0 +1,32 @@
+{
+	"extensionName": {
+		"message": "Tab Manager for Mobile",
+		"description": "Name of the extension."
+	},
+	"extensionDescription": {
+		"message": "This adds Tab-Manager page.",
+		"description": "Description of the extension."
+	},
+	"closeThisTab": {
+		"message": "Close this"
+	},
+	"closeOtherTabs": {
+		"message": "Close other tabs"
+	},
+	"cloneThisTab": {
+		"message": "Clone this tab"
+	},
+	"closeLeftTabsFromThis": {
+		"message": "Close left(upper) tabs"
+	},
+	"closeRightTabsFromThis": {
+		"message": "Close right(lower) tabs"
+	},
+	"copyTitleAndUrl": {
+		"message": "Copy title and URL"
+	},
+	"copyTitleAndURLofAllCheckedTabs": {
+		"message": "Copy title and URL of all checked tabs"
+	}
+}
+

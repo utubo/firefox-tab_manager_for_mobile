@@ -1,0 +1,32 @@
+{
+	"manifest_version": 2,
+	"name": "__MSG_extensionName__",
+	"description": "__MSG_extensionDescription__",
+	"version": "1.3.1",
+	"default_locale": "en",
+	"icons": {
+		"32": "icons/tabManager.png"
+	},
+
+	"applications": {
+		"gecko": {
+			"id": "tab_manager@utb.dip.jp",
+			"strict_min_version": "54.0"
+		}
+	},
+
+	"page_action": {
+		"default_icon": "icons/tabManager.png",
+		"default_title": "Tab Manager"
+	},
+
+	"background": {
+		"scripts": ["background.js"]
+	},
+
+	"permissions": [
+		"tabs",
+		"storage",
+		"clipboardWrite"
+	]
+}

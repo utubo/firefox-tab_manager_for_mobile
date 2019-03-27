@@ -1,0 +1,204 @@
+body {
+	background: #f9f9fa;
+	color: #444;
+	margin: 0;
+	max-width: 100%;
+	overflow: hidden;
+}
+#cover {
+	background: #fff;
+	height: 100%;
+	left: 0;
+	pointer-events: none;
+	position: fixed;
+	top: 0;
+	transition: opacity .3s;
+	width: 100%;
+	z-index: 99;
+}
+.transparent {
+	opacity: 0;
+	pointer-events: none;
+}
+.tab-list {
+	display: block;
+	background: #d7d7db;
+	border-top: 1px solid #d7d7db;
+	margin: 0;
+	max-height: calc(100% - 40px);
+	overflow-x: hidden;
+	overflow-y: auto;
+	padding: 0;
+	bottom: 40px;
+	position: absolute;
+	-moz-user-select: none;
+	user-select: none;
+	width: 100%;
+}
+.float-target-parent {
+	overflow-y: hidden; /* 'e.preventDefault()' does not work. */
+}
+.tab {
+	background: #f9f9fa;
+	border-bottom: 1px solid #d7d7db;
+	display: block;
+	height: 5em;
+	max-height: 4em;
+	padding: 0 1em;
+	position: relative;
+}
+.active {
+	border-left: 4px solid #f90;
+}
+.title,
+.url {
+	display: block;
+	max-width: calc(100 % - 20px);
+	overflow: hidden;
+	pointer-events: none;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.title {
+	color: #0c0c0d;
+	font-size: 120%;
+	padding-top: .5em;
+}
+.not-loaded {
+	opacity: .5;
+}
+.url {
+	color: #444;
+}
+.checkbox {
+	background-image: url(./icons/checkbox.svg);
+	background-position: right top;
+	background-repeat: no-repeat;
+	background-size: 32px 32px;
+	height: 100%;
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 48px;
+}
+.checked {
+	background-image: url(./icons/checked.svg);
+}
+.toolbar {
+	background: #eee;
+	bottom: 0;
+	box-sizing: border;
+	display: flex;
+	justify-content: space-around;
+	max-width: 100%;
+	padding: 4px;
+	position: absolute;
+	width: 100%;
+}
+.tool-button {
+	display: inline-block;
+	height: 32px;
+	width: 32px;
+	vertical-align: middle;
+}
+.removing {
+	overflow: hidden;
+	max-height: 0;
+	opacity: 0;
+	transition: all .5s;
+}
+.reloading {
+	animation: reloading .3s ease-out;
+}
+@keyframes reloading {
+	0% { background: #f90; }
+	100% { background: #f9f9fa; }
+}
+#floater {
+	background: #f9f9fa;
+	border-top: 1px solid #d7d7db;
+	pointer-events: none;
+	position: fixed;
+	width: 100%;
+}
+.hide {
+	display: none;
+}
+.slideout {
+	transition: left 0.3s;
+}
+.float-target {
+	border-left: none;
+	opacity: 0;
+}
+.popupmenu {
+	align-items: center;
+	background: rgba(0,0,0,.5);
+	display: flex;
+	height: 100%;
+	justify-content: center;
+	opacity: 0;
+	pointer-events: none;
+	position: fixed;
+	-moz-user-select: none;
+	transition: opacity .2s;
+	user-select: none;
+	width: 100%;
+	z-index: 1;
+}
+.popuped {
+	opacity: 1;
+	pointer-events: auto;
+}
+.menuitem-container {
+	background: #f9f9fa;
+	border-radius: 2px;
+	color: #444;
+	max-height: 100%;
+	max-width: 90%;
+	overflow-y: auto;
+}
+.menu-title,
+.menu-url {
+	overflow: hidden;
+	pointer-events: none;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.menu-title {
+	color: #0c0c0d;
+	font-size: 120%;
+	max-width: 100%;
+	padding: 14px 0 0 14px;
+}
+.menu-url {
+	border-bottom: 2px solid #f90;
+	max-width: 100%;
+	padding: 0 0 14px 14px;
+}
+
+.menuitem {
+	border-bottom: 1px solid #d7d7db;
+	max-width: 100%;
+	padding: 14px 14px 14px 60px;
+	position: relative;
+}
+.menuitem::before {
+	content: '';
+	display: block;
+	float:left;
+	height: 32px;
+	margin-right:14px;
+	position: absolute;
+	top: 8px;
+	left: 14px;
+	width: 32px;
+}
+#closeThisTab::before { content: url(./icons/closeThisTab.svg); }
+#closeOtherTabs::before { content: url(./icons/closeOtherTabs.svg); }
+#cloneThisTab::before { content: url(./icons/cloneThisTab.svg); }
+#closeLeftTabsFromThis::before { content: url(./icons/closeLeftTabsFromThis.svg); }
+#closeRightTabsFromThis::before { content: url(./icons/closeRightTabsFromThis.svg); }
+#copyTitleAndUrl::before { content: url(./icons/copyTitleAndUrl.svg); }
+#copyTitleAndURLofAllCheckedTabs::before { content: url(./icons/copyTitleAndURLofAllCheckedTabs.svg); }
+

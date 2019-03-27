@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		<link rel="stylesheet" href="./tab_manager.css">
+		<link rel="icon" href="./icons/tabManager.png">
+		<title>Tab Manager</title>
+	</head>
+	<body>
+		<ul id="tabList" class="tab-list">
+		</ul>
+		<ul style="display: none">
+			<li id="template" class="tab">
+				<span class="title"></span>
+				<span class="url"></span>
+				<span class="checkbox"></span>
+			</li>
+		</ul>
+		<div class="toolbar">
+			<img id="reloadSelectedTabs" class="tool-button" src="icons/reloadSelectedTabs.svg">
+			<img id="closeSelectedTabs" class="tool-button" src="icons/closeSelectedTabs.svg">
+			<img id="closeUnselectedTabs" class="tool-button" src="icons/closeUnelectedTabs.svg">
+			<img id="closeLeftTabs" class="tool-button" src="icons/closeLeftTabs.svg">
+			<img id="closeRightTabs" class="tool-button" src="icons/closeRightTabs.svg">
+			<img id="closeAllTabs" class="tool-button" src="icons/closeAllTabs.svg">
+		</div>
+		<div id="floater"></div>
+		<div id="popupmenu" class="popupmenu">
+			<div class="menuitem-container">
+				<div class="menu-title" id="menuTitle"></div>
+				<div class="menu-url" id="menuUrl"></div>
+				<div class="menuitem" id="closeThisTab"></div>
+				<div class="menuitem" id="closeOtherTabs"></div>
+				<div class="menuitem" id="cloneThisTab"></div>
+				<div class="menuitem" id="closeLeftTabsFromThis"></div>
+				<div class="menuitem" id="closeRightTabsFromThis"></div>
+				<div class="menuitem" id="copyTitleAndUrl"></div>
+				<div class="menuitem" id="copyTitleAndURLofAllCheckedTabs"></div>
+			</div>
+		</div>
+		<div id="cover"></div>
+		<script src="tab_manager.js"></script>
+	</body>
+</html>
+
