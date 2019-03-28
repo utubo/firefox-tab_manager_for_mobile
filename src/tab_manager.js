@@ -286,6 +286,7 @@
 		touchmoved = false;
 		popupMenu.clearTimer();
 		if (!e.target.classList.contains('tab')) return;
+		e.preventDefault();
 		[floater.startX, floater.startY] = getXY(e);
 		floater.offsetTop = e.target.offsetTop + tabList.offsetTop - tabList.scrollTop;
 		floater.tab = e.target;
