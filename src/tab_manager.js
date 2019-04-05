@@ -17,6 +17,7 @@
 	let FLOAT_TRIGGER = 32;
 	let DELETE_TRIGGER = 80;
 	let CLOSE_WAIT_MSEC = 600;
+	let LONG_TAP_MSEC = 600;
 
 	// fields -------------------------
 	let TAB_MANAGER_URL = chrome.extension.getURL('tab_manager.html');
@@ -29,6 +30,8 @@
 	// DOM cache ---------------------
 	let tabs = []; // <li>
 	let tabList = byId('tabList'); // <ul>
+	let tabMenu = byId('tabMenu'); // <ul>
+	let recentList = byId('recentList'); // <ul>
 
 	// utils for tab manager ---------
 	let tabId = li => li.id.replace(/^tab_/, '') | 0;
@@ -123,6 +126,9 @@
 				remove(tab);
 			}
 		},
+		recent: () => {
+			popupMenu.popupAsRecent();
+		}
 	};
 
 	let popupMenu = {
@@ -131,9 +137,33 @@
 		div: byId('popupmenu'),
 		popup: () => {
 			popupMenu.tab = floater.tab;
-			floater.hide();
 			byId('menuTitle').textContent = byClass(popupMenu.tab, 'title').textContent;
 			byId('menuUrl').textContent = byClass(popupMenu.tab, 'url').textContent;
+			tabMenu.classList.remove('hide');
+			recentList.classList.add('hide');
+			floater.hide();
+			popupMenu.div.classList.add('popuped');
+			popupMenu.popuped = true;
+		},
+		popupAsRecent: async () => {
+			let res = await browser.storage.local.get('tab_manager');
+			if (!res && !res.tab_manager) return;
+			recent = res.tab_manager.recent;
+			byId('recentListItems').remove();
+			let items = document.createElement('DIV');
+			items.id = 'recentListItems';
+			let template = byId('recentTemplate');
+			for (let r of recent) {
+				let li = template.cloneNode(true);
+				li.id = 'recent_' + r.url;
+				byClass(li, 'title').textContent = r.title;
+				byClass(li, 'url').textContent = r.url;
+				items.appendChild(li);
+			}
+			recentList.appendChild(items);
+			tabMenu.classList.add('hide');
+			recentList.classList.remove('hide');
+			floater.hide();
 			popupMenu.div.classList.add('popuped');
 			popupMenu.popuped = true;
 		},
@@ -149,7 +179,7 @@
 		setTimer: () => {
 			popupMenu.popuped = false;
 			popupMenu.clearTimer();
-			popupMenu.popupTimer = window.setTimeout(popupMenu.popup, 1000);
+			popupMenu.popupTimer = window.setTimeout(popupMenu.popup, LONG_TAP_MSEC);
 		},
 		// actions --------------------
 		closeThisTab: () => {
@@ -200,7 +230,6 @@
 	};
 
 	// others -------------------------
-
 	let slideout = (tab, startX) => {
 		tab.style.marginLeft = startX + 'px';
 		window.setTimeout(() => { tab.classList.add('slideout'); });
@@ -254,7 +283,6 @@
 	browser.runtime.sendMessage('').then(res => {
 		activeTabId = res.activeTabId;
 		savedTabs = res.tabs;
-		recent = res.recent;
 		browser.tabs.query({}).then(_tabs => {
 			closeOtherTabManagerTabs(_tabs);
 			listupTabs(_tabs);

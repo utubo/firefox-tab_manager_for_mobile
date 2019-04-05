@@ -21,22 +21,37 @@
 			<img id="reloadSelectedTabs" class="tool-button" src="icons/reloadSelectedTabs.svg">
 			<img id="closeSelectedTabs" class="tool-button" src="icons/closeSelectedTabs.svg">
 			<img id="closeUnselectedTabs" class="tool-button" src="icons/closeUnelectedTabs.svg">
+			<!--
 			<img id="closeLeftTabs" class="tool-button" src="icons/closeLeftTabs.svg">
 			<img id="closeRightTabs" class="tool-button" src="icons/closeRightTabs.svg">
+			-->
 			<img id="closeAllTabs" class="tool-button" src="icons/closeAllTabs.svg">
+			<img id="recent" class="tool-button" src="icons/recent.svg">
 		</div>
 		<div id="floater"></div>
 		<div id="popupmenu" class="popupmenu">
 			<div class="menuitem-container">
-				<div class="menu-title" id="menuTitle"></div>
-				<div class="menu-url" id="menuUrl"></div>
-				<div class="menuitem" id="closeThisTab"></div>
-				<div class="menuitem" id="closeOtherTabs"></div>
-				<div class="menuitem" id="cloneThisTab"></div>
-				<div class="menuitem" id="closeLeftTabsFromThis"></div>
-				<div class="menuitem" id="closeRightTabsFromThis"></div>
-				<div class="menuitem" id="copyTitleAndUrl"></div>
-				<div class="menuitem" id="copyTitleAndURLofAllCheckedTabs"></div>
+				<div id="tabMenu">
+					<div class="menu-title" id="menuTitle"></div>
+					<div class="menu-url" id="menuUrl"></div>
+					<div class="menuitem" id="closeThisTab"></div>
+					<div class="menuitem" id="closeOtherTabs"></div>
+					<div class="menuitem" id="cloneThisTab"></div>
+					<div class="menuitem" id="closeLeftTabsFromThis"></div>
+					<div class="menuitem" id="closeRightTabsFromThis"></div>
+					<div class="menuitem" id="copyTitleAndUrl"></div>
+					<div class="menuitem" id="copyTitleAndURLofAllCheckedTabs"></div>
+				</div>
+				<div class="recentList hide" id="recentList">
+					<div class="recentlist-title"></div>
+					<div id="recentListItems"></div>
+				</div>
+				<div style="display: none;">
+					<div id="recentTemplate" class="recent">
+						<span class="title"></span>
+						<span class="url"></span>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div id="cover"></div>

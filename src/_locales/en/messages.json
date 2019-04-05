@@ -27,6 +27,9 @@
 	},
 	"copyTitleAndURLofAllCheckedTabs": {
 		"message": "Copy title and URL of all checked tabs"
+	},
+	"recentTabs": {
+		"message": "Recent tabs"
 	}
 }
 

@@ -42,8 +42,7 @@ body {
 	background: #f9f9fa;
 	border-bottom: 1px solid #d7d7db;
 	display: block;
-	height: 5em;
-	max-height: 4em;
+	height: 4em;
 	padding: 0 1em;
 	position: relative;
 }
@@ -68,7 +67,7 @@ body {
 	opacity: .5;
 }
 .url {
-	color: #444;
+	color: #666;
 }
 .checkbox {
 	background-image: url(./icons/checkbox.svg);
@@ -103,12 +102,12 @@ body {
 }
 .removing {
 	overflow: hidden;
-	max-height: 0;
+	height: 0;
 	opacity: 0;
 	transition: all .4s;
 }
 .reloading {
-	animation: reloading .3s ease-out;
+	animation: reloading .4s ease-out;
 }
 @keyframes reloading {
 	0% { background: #f90; }
@@ -176,12 +175,14 @@ body {
 	max-width: 100%;
 	padding: 0 0 14px 14px;
 }
-
 .menuitem {
 	border-bottom: 1px solid #d7d7db;
 	max-width: 100%;
 	padding: 14px 14px 14px 60px;
 	position: relative;
+}
+.menuitem:last-child {
+	border: none;
 }
 .menuitem::before {
 	content: '';
@@ -193,6 +194,34 @@ body {
 	top: 8px;
 	left: 14px;
 	width: 32px;
+}
+.recentlist-title {
+	background: url('./icons/recent.svg') no-repeat center right;
+	background-size: 5em;
+	border-bottom: 2px solid #f90;
+	max-width: 100%;
+}
+.recentlist-title::before {
+	background: #f9f9fa99;
+	box-sizing: border-box;
+	color: #0c0c0d;
+	content: '__MSG_recentTabs__';
+	display: inline-block;
+	font-size: 120%;
+	padding: 14px;
+	width: 100%;
+}
+#recentListItems {
+	min-height: 2em;
+}
+.recent {
+	border-bottom: 1px solid #d7d7db;
+	max-width: 100%;
+	padding: 14px;
+	position: relative;
+}
+.recent:last-child {
+	border: none;
 }
 #closeThisTab::before { content: url(./icons/closeThisTab.svg); }
 #closeOtherTabs::before { content: url(./icons/closeOtherTabs.svg); }

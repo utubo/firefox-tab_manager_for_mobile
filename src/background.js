@@ -55,7 +55,10 @@ var TabMan = TabMan || { activeTabId: null, tabs: {}, recent: [] };
 	});
 
 	// recent tabs ---------------------
-	browser.tabs.onRemoved.addListener(tab => {
+	browser.tabs.onRemoved.addListener((tabId, removeInfo) => {
+		let tab = TabMan.tabs[tabId];
+		if (!tab) return;
+		if (!tab.url) return;
 		if (tab.url === TAB_MANAGER_URL) return;
 		if (!tab.url.startsWith('http')) return;
 		let index = null;
@@ -72,6 +75,7 @@ var TabMan = TabMan || { activeTabId: null, tabs: {}, recent: [] };
 			TabMan.recent.unshift({ title: tab.title, url: tab.url });
 			TabMan.recent.splice(MAX_RECENT);
 		}
+		console.log(tab.url + 'add history');
 		saveIni();
 	});
 
@@ -93,6 +97,7 @@ var TabMan = TabMan || { activeTabId: null, tabs: {}, recent: [] };
 	browser.storage.local.get('tab_manager').then(res => {
 		if (res && res.tab_manager) {
 			TabMan.tabs = res.tab_manager.tabs;
+			TabMan.recent = res.tab_manager.recent || [];
 		}
 	});
 	browser.tabs.query({active: true, currentWindow: true}).then(tabs => {

@@ -27,6 +27,9 @@
 	},
 	"copyTitleAndURLofAllCheckedTabs": {
 		"message": "チェックしたタブのタイトルとURLをコピーする"
+	},
+	"recentTabs": {
+		"message": "最近閉じたタブ"
 	}
 }
 
