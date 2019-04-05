@@ -2,7 +2,7 @@
 <g stroke="dimgray" stroke-width="2" stroke-linejoin="round" fill="none">
 <path d="M2 30v-11h20v10h9"/>
 <path d="M8 24l3 4l5-6"/>
-<path d="M30 10q 0.5 4-4 4.5q-4 0 -4.5-3.5q-0.5 -5 4.5-4.7h2m-2.5-2.5l2.5 2.5l-2.5 2.5"/>
+<path d="M30 3v5h-5m3.8 0a6 6 0 1 0-2 5"/>
 </g>
 </svg>
 
