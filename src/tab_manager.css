@@ -92,7 +92,7 @@ body {
 	max-width: 100%;
 	padding: 4px;
 	position: absolute;
-	width: 100%;
+	width: 100vw;
 }
 .tool-button {
 	display: inline-block;
@@ -153,8 +153,8 @@ body {
 	background: #f9f9fa;
 	border-radius: 2px;
 	color: #444;
-	max-height: 100%;
-	max-width: 90%;
+	max-height: 88%;
+	max-width: 88%;
 	overflow-y: auto;
 }
 .menu-title,
@@ -172,6 +172,7 @@ body {
 }
 .menu-url {
 	border-bottom: 2px solid #f90;
+	color: #666;
 	max-width: 100%;
 	padding: 0 0 14px 14px;
 }
@@ -197,7 +198,7 @@ body {
 }
 .recentlist-title {
 	background: url('./icons/recent.svg') no-repeat center right;
-	background-size: 5em;
+	background-size: 5.5em;
 	border-bottom: 2px solid #f90;
 	max-width: 100%;
 }
@@ -217,7 +218,7 @@ body {
 .recent {
 	border-bottom: 1px solid #d7d7db;
 	max-width: 100%;
-	padding: 14px;
+	padding: 0 14px 14px 14px;
 	position: relative;
 }
 .recent:last-child {
