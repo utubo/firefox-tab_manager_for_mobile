@@ -17,7 +17,7 @@
 	let FLOAT_TRIGGER = 32;
 	let DELETE_TRIGGER = 80;
 	let CLOSE_WAIT_MSEC = 600;
-	let LONG_TAP_MSEC = 600;
+	let LONG_TAP_MSEC = 400;
 
 	// fields -------------------------
 	let TAB_MANAGER_URL = chrome.extension.getURL('tab_manager.html');
