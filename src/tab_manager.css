@@ -1,19 +1,20 @@
 body {
 	background: #f9f9fa;
+	box-sizing: border-box;
 	color: #444;
 	margin: 0;
-	max-width: 100%;
+	max-width: 100vw;
 	overflow: hidden;
 }
 #cover {
 	background: #fff;
-	height: 100%;
+	height: 100vh;
 	left: 0;
 	pointer-events: none;
 	position: fixed;
 	top: 0;
 	transition: opacity .3s;
-	width: 100%;
+	width: 100vh;
 	z-index: 99;
 }
 .transparent {
@@ -41,6 +42,7 @@ body {
 .tab {
 	background: #f9f9fa;
 	border-bottom: 1px solid #d7d7db;
+	box-sizing: border-box;
 	display: block;
 	height: 4em;
 	padding: 0 1em;
@@ -153,8 +155,8 @@ body {
 	background: #f9f9fa;
 	border-radius: 2px;
 	color: #444;
-	max-height: 88%;
-	max-width: 88%;
+	max-height: 88vh;
+	max-width: 88vw;
 	overflow-y: auto;
 }
 .menu-title,
@@ -214,6 +216,8 @@ body {
 }
 #recentListItems {
 	min-height: 2em;
+	max-height: calc(88vh - 28px - 1.2em);/* container - padding * 2 - font-size */
+	overflow-y: auto;
 }
 .recent {
 	border-bottom: 1px solid #d7d7db;

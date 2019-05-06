@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
 <g stroke="dimgray" stroke-width="2" stroke-linejoin="round" fill="none">
 <path d="M2 30v-11h20v10h9"/>
+<path fill="dimgray" d="M10 23v6l2-2l2 4l-2-4h3z" opacity="0.2"/>
 <path d="M21 6l9 9m0-9l-9 9"/>
 </g>
 </svg>
