@@ -61,21 +61,13 @@ var TabMan = TabMan || { activeTabId: null, tabs: {}, recent: [] };
 		if (!tab.url) return;
 		if (tab.url === TAB_MANAGER_URL) return;
 		if (!tab.url.startsWith('http')) return;
-		let index = null;
-		for (let i = TabMan.recent.length - 1; 0 <= i; i--) {
-			if (TabMan.recent[i].url === tab.url) {
-				index = i;
-				break;
-			}
-		}
+		const index = TabMan.recent.findIndex(elm => elm.url === tab.url);
 		if (index === 0) return;
-		if (index) {
-			TabMan.recent.unshift(TabMan.recent[index]);
-		} else {
-			TabMan.recent.unshift({ title: tab.title, url: tab.url });
-			TabMan.recent.splice(MAX_RECENT);
+		if (index !== -1) {
+			TabMan.recent.splice(index, 1);
 		}
-		console.log(tab.url + 'add history');
+		TabMan.recent.unshift({ title: tab.title, url: tab.url });
+		TabMan.recent.splice(MAX_RECENT);
 		saveIni();
 	});
 
