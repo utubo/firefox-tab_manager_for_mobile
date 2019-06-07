@@ -45,6 +45,13 @@
 		window.setTimeout(() => { li.parentNode.removeChild(li); }, 510);
 	};
 
+	let titleOrFileName = tab => {
+		if (tab.title && tab.title !== tab.url && tab.title !== tab.url.replace(/^https?:\/\//, '')) return tab.title;
+		const s = tab.url.replace(/[?#].*/, '').replace(/\/+$/, '');
+		if (s.match(/\/([^\/]+)$/)) return RegExp.$1;
+		return url;
+	};
+
 	// tools --------------------------
 	let floater = {
 		tab: null,
@@ -153,11 +160,11 @@
 			let items = document.createElement('DIV');
 			items.id = 'recentListItems';
 			let template = byId('recentTemplate');
-			for (let r of recent) {
+			for (let tab of recent) {
 				let li = template.cloneNode(true);
-				li.id = 'recent_' + r.url;
-				byClass(li, 'title').textContent = r.title;
-				byClass(li, 'url').textContent = r.url;
+				li.id = 'recent_' + tab.url;
+				byClass(li, 'title').textContent = titleOrFileName(tab);
+				byClass(li, 'url').textContent = tab.url;
 				items.appendChild(li);
 			}
 			recentList.appendChild(items);
@@ -267,7 +274,7 @@
 					tab = { title: 'Not Loaded', url: '' };
 				}
 			}
-			byClass(li, 'title').textContent = tab.title;
+			byClass(li, 'title').textContent = titleOrFileName(tab);
 			byClass(li, 'url').textContent = tab.url;
 			if (tab.id === activeTabId) {
 				activeTab = li;
