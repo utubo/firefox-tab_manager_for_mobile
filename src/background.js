@@ -2,8 +2,8 @@ var TabMan = TabMan || { activeTabId: null, tabs: {}, recent: [] };
 (() => {
 	'use strict';
 
-	let MAX_RECENT = 10;
-	let TAB_MANAGER_URL = chrome.extension.getURL('tab_manager.html');
+	const MAX_RECENT = 10;
+	const TAB_MANAGER_URL = chrome.extension.getURL('tab_manager.html');
 	let pageActionClicked;
 
 	browser.runtime.onMessage.addListener((m, s, r) => {
@@ -19,14 +19,14 @@ var TabMan = TabMan || { activeTabId: null, tabs: {}, recent: [] };
 		browser.tabs.create({ url: TAB_MANAGER_URL, active: true });
 	});
 
-	let saveIni = () => {
+	const saveIni = () => {
 		browser.storage.local.set({ 'tab_manager': { tabs: TabMan.tabs, recent: TabMan.recent } });
 	};
 
 	// save tabs ----------------------
-	let refleshTabs = () => {
+	const refleshTabs = () => {
 		browser.tabs.query({}).then(tabs => {
-			let newTabs = {};
+			const newTabs = {};
 			for (let tab of tabs) {
 				if (tab.url === TAB_MANAGER_URL) continue;
 				if (!tab.title && tab.url === 'about:blank' && TabMan.tabs[tab.id]) {
@@ -40,7 +40,7 @@ var TabMan = TabMan || { activeTabId: null, tabs: {}, recent: [] };
 		saveIni();
 	};
 	let refleshTabsTimer;
-	let refleshTabsLezy = (id, info, tab) => {
+	const refleshTabsLezy = (id, info, tab) => {
 		window.clearTimeout(refleshTabsTimer);
 		refleshTabsTimer = window.setTimeout(refleshTabs, 1000);
 	};
@@ -56,7 +56,7 @@ var TabMan = TabMan || { activeTabId: null, tabs: {}, recent: [] };
 
 	// recent tabs ---------------------
 	browser.tabs.onRemoved.addListener((tabId, removeInfo) => {
-		let tab = TabMan.tabs[tabId];
+		const tab = TabMan.tabs[tabId];
 		if (!tab) return;
 		if (!tab.url) return;
 		if (tab.url === TAB_MANAGER_URL) return;

@@ -2,10 +2,10 @@
 	'use strict';
 
 	// utils (basic) ------------------
-	let byId = id => document.getElementById(id);
-	let byClass = (p, clazz) => p.getElementsByClassName(clazz)[0];
-	let copyToClipbd = text => {
-		let work = document.createElement('TEXTAREA');
+	const byId = id => document.getElementById(id);
+	const byClass = (p, clazz) => p.getElementsByClassName(clazz)[0];
+	const copyToClipbd = text => {
+		const work = document.createElement('TEXTAREA');
 		work.value = text;
 		document.body.appendChild(work);
 		work.select();
@@ -14,13 +14,13 @@
 	};
 
 	// const -------------------------
-	let FLOAT_TRIGGER = 32;
-	let DELETE_TRIGGER = 80;
-	let CLOSE_WAIT_MSEC = 600;
-	let LONG_TAP_MSEC = 400;
+	const FLOAT_TRIGGER = 32;
+	const DELETE_TRIGGER = 80;
+	const CLOSE_WAIT_MSEC = 600;
+	const LONG_TAP_MSEC = 400;
+	const TAB_MANAGER_URL = chrome.extension.getURL('tab_manager.html');
 
 	// fields -------------------------
-	let TAB_MANAGER_URL = chrome.extension.getURL('tab_manager.html');
 	let TAB_MANAGER_ID = null;
 	let activeTabId;
 	let savedTabs = {};
@@ -28,24 +28,24 @@
 	let touchmoved = false;
 
 	// DOM cache ---------------------
-	let tabs = []; // <li>
-	let tabList = byId('tabList'); // <ul>
-	let tabMenu = byId('tabMenu'); // <ul>
-	let recentList = byId('recentList'); // <ul>
+	const tabs = []; // <li>
+	const tabList = byId('tabList'); // <ul>
+	const tabMenu = byId('tabMenu'); // <ul>
+	const recentList = byId('recentList'); // <ul>
 
 	// utils for tab manager ---------
-	let tabId = li => li.id.replace(/^tab_/, '') | 0;
+	const tabId = li => li.id.replace(/^tab_/, '') | 0;
 
-	let checked = li => byClass(li, 'checkbox').classList.contains('checked');
+	const checked = li => byClass(li, 'checkbox').classList.contains('checked');
 
-	let remove = li => {
+	const remove = li => {
 		tabs.splice(tabs.indexOf(li), 1);
 		browser.tabs.remove(tabId(li));
 		li.classList.add('removing');
 		window.setTimeout(() => { li.parentNode.removeChild(li); }, 510);
 	};
 
-	let titleOrFileName = tab => {
+	const titleOrFileName = tab => {
 		if (tab.title && tab.title !== tab.url && tab.title !== tab.url.replace(/^https?:\/\//, '')) return tab.title;
 		const s = tab.url.replace(/[?#].*/, '').replace(/\/+$/, '');
 		if (s.match(/\/([^\/]+)$/)) return RegExp.$1;
@@ -53,7 +53,7 @@
 	};
 
 	// tools --------------------------
-	let floater = {
+	const floater = {
 		tab: null,
 		div: byId('floater'),
 		hide: () => {
@@ -96,7 +96,7 @@
 	};
 
 	// actions ------------------------
-	let toolButtons = {
+	const toolButtons = {
 		reloadSelectedTabs: () => {
 			for (let tab of tabs) {
 				if (checked(tab)) {
@@ -128,7 +128,7 @@
 		},
 		closeRightTabs: () => {
 			for (let i = tabs.length - 1; 0 <= i; i --) {
-				let tab = tabs[i];
+				const tab = tabs[i];
 				if (checked(tab)) return;
 				remove(tab);
 			}
@@ -138,7 +138,7 @@
 		}
 	};
 
-	let popupMenu = {
+	const popupMenu = {
 		// long tap to popup -----------
 		popuped: false,
 		div: byId('popupmenu'),
@@ -153,15 +153,15 @@
 			popupMenu.popuped = true;
 		},
 		popupAsRecent: async () => {
-			let res = await browser.storage.local.get('tab_manager');
+			const res = await browser.storage.local.get('tab_manager');
 			if (!res && !res.tab_manager) return;
 			recent = res.tab_manager.recent;
 			byId('recentListItems').remove();
-			let items = document.createElement('DIV');
+			const items = document.createElement('DIV');
 			items.id = 'recentListItems';
-			let template = byId('recentTemplate');
+			const template = byId('recentTemplate');
 			for (let tab of recent) {
-				let li = template.cloneNode(true);
+				const li = template.cloneNode(true);
 				li.id = 'recent_' + tab.url;
 				byClass(li, 'title').textContent = titleOrFileName(tab);
 				byClass(li, 'url').textContent = tab.url;
@@ -215,7 +215,7 @@
 		},
 		closeRightTabsFromThis: () => {
 			for (let i = tabs.length - 1; 0 <= i; i --) {
-				let tab = tabs[i];
+				const tab = tabs[i];
 				if (tab === popupMenu.tab) return;
 				remove(tab);
 			}
@@ -227,7 +227,7 @@
 			copyToClipbd(popupMenu.titleAndUrl(popupMenu.tab));
 		},
 		copyTitleAndURLofAllCheckedTabs: () => {
-			let lines = [];
+			const lines = [];
 			for (let tab of tabs) {
 				if (!checked(tab)) continue;
 				lines.push(popupMenu.titleAndUrl(tab));
@@ -237,7 +237,7 @@
 	};
 
 	// others -------------------------
-	let slideout = (tab, startX) => {
+	const slideout = (tab, startX) => {
 		tab.style.marginLeft = startX + 'px';
 		window.setTimeout(() => { tab.classList.add('slideout'); });
 		window.setTimeout(() => { tab.style.marginLeft = (startX < 0 ? '-' : '') +  window.innerWidth + 'px'; });
@@ -246,9 +246,9 @@
 	};
 
 	// setup tab manager page ---------
-	let closeOtherTabManagerTabs = _tabs => {
+	const closeOtherTabManagerTabs = _tabs => {
 		for (let i = _tabs.length - 1; 0 <= i; i --) {
-			let tab = _tabs[i];
+			const tab = _tabs[i];
 			if (tab.active) continue;
 			if (tab.url !== TAB_MANAGER_URL) continue;
 			browser.tabs.remove(tab.id);
@@ -256,15 +256,15 @@
 		}
 	};
 
-	let listupTabs = _tabs => {
+	const listupTabs = _tabs => {
+		const template = byId('template');
 		let activeTab;
-		let template = byId('template');
 		for (let tab of _tabs) {
 			if (tab.url === TAB_MANAGER_URL) {
 				TAB_MANAGER_ID = tab.id;
 				continue;
 			}
-			let li = template.cloneNode(true);
+			const li = template.cloneNode(true);
 			li.id = 'tab_' + tab.id;
 			if (!tab.title && tab.url === 'about:blank') {
 				if (savedTabs[tab.id]) {
@@ -296,7 +296,7 @@
 		});
 	});
 
-	let menuItems = document.getElementsByClassName('menuitem');
+	const menuItems = document.getElementsByClassName('menuitem');
 	for (let menuItem of menuItems) {
 		menuItem.textContent = chrome.i18n.getMessage(menuItem.id);
 	}
@@ -316,7 +316,7 @@
 			browser.tabs.remove(TAB_MANAGER_ID);
 		}
 	});
-	let getXY = e => e.touches ? [e.touches[0].clientX, e.touches[0].clientY] : [e.pageX, e.pageY];
+	const getXY = e => e.touches ? [e.touches[0].clientX, e.touches[0].clientY] : [e.pageX, e.pageY];
 	tabList.addEventListener('ontouchstart' in window ? 'touchstart' : 'mousedown', e => {
 		touchmoved = false;
 		popupMenu.clearTimer();
@@ -334,9 +334,9 @@
 		if (!floater.tab) return;
 		popupMenu.clearTimer();
 		touchmoved = true;
-		let [x, y] = getXY(e);
-		let dx = x - floater.startX;
-		let dy = y - floater.startY;
+		const [x, y] = getXY(e);
+		const dx = x - floater.startX;
+		const dy = y - floater.startY;
 		if (floater.stickyX) {
 			if (Math.abs(dx) < FLOAT_TRIGGER) return;
 			floater.stickyX = false;
@@ -371,7 +371,7 @@
 			}
 			// swipe a list item.
 			if (!floater.stickyY) {
-				let y = floater.tab.offsetTop + floater.dy;
+				const y = floater.tab.offsetTop + floater.dy;
 				let p = tabs.length;
 				for (let i = 0; i < tabs.length - 1; i ++) {
 					if (y < tabs[i].offsetTop) {
@@ -380,7 +380,7 @@
 						break;
 					}
 				}
-				let targetId = tabId(floater.tab);
+				const targetId = tabId(floater.tab);
 				tabs.splice(p, 0, tabs.splice(tabs.indexOf(floater.tab), 1)[0]);
 				tabList.insertBefore(floater.tab, tabs[p + 1]);
 				if (p < tabs.length - 1) {
