@@ -62,7 +62,7 @@ var TabMan = TabMan || {
 		if (!res.tab_manager) return;
 		TabMan.tabs = res.tab_manager.tabs;
 		TabMan.recent = res.tab_manager.recent || [];
-		TabMan.recentMaxCount = res.tab_manager.recentMaxCount;
+		TabMan.recentMaxCount = res.tab_manager.recentMaxCount || 10;
 		TabMan.theme = res.tab_manager.theme;
 		TabMan.css = res.tab_manager.css;
 	};
