@@ -39,7 +39,7 @@ body {
 .float-target-parent {
 	overflow-y: hidden; /* 'e.preventDefault()' does not work. */
 }
-.top-margin {
+.tablist-margin-top {
 	height: calc(100vh - 40px - 4em);
 }
 .tab {
