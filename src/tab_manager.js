@@ -334,28 +334,55 @@
 		}
 	});
 
-	let slipTimer;
-	let slipSpeed = 0;
-	const slipScroll = () => {
-		tabList.scrollBy(0, slipSpeed);
-		slipSpeed *= 0.95;
-		if (1 <= Math.abs(slipSpeed)) {
-			slipTimer = setTimeout(slipScroll, 16);
+	const slipScroll = {
+		timer: null,
+		speed: 0,
+		lastMoveTime: 0,
+		lastScrollTop: 0,
+		setLastData: function() {
+			this.lastMoveTime = new Date();
+			this.lastScrollTop = tabList.scrollTop;
+		},
+		clearTimer: function() {
+			clearTimeout(this.timer);
+			this.timer = null;
+		},
+		start: function() {
+			const dt = new Date().getTime() - this.lastMoveTime.getTime();
+			if (100 < dt) return;
+			const dy = tabList.scrollTop - this.lastScrollTop;
+			this.speed = dy * 16 / dt / 4;
+			slipScroll.clearTimer();
+			slipScroll.scroll();
+		},
+		scroll: function() {
+			slipScroll.speed *= 0.95;
+			if (1 <= Math.abs(slipScroll.speed)) {
+				tabList.scrollTo(0, tabList.scrollTop + slipScroll.speed);
+				slipScroll.clearTimer();
+				slipScroll.timer = setTimeout(slipScroll.scroll, 16);
+			}
 		}
+	};
+
+	const resetFloater = e => {
+		floater.tab = e.target;
+		[floater.startX, floater.startY] = getXY(e);
+		floater.dx = 0;
+		floater.dy = 0;
+		floater.stickyX = true;
+		floater.stickyY = true;
+		floater.startScrollTop = tabList.scrollTop;
 	};
 
 	const getXY = e => e.touches ? [e.touches[0].clientX, e.touches[0].clientY] : [e.pageX, e.pageY];
 	tabList.addEventListener('ontouchstart' in window ? 'touchstart' : 'mousedown', e => {
 		touchmoved = false;
 		popupMenu.clearTimer();
-		clearTimeout(slipTimer);
+		slipScroll.clearTimer();
 		if (!e.target.classList.contains('tab')) return;
 		e.preventDefault();
-		[floater.startX, floater.startY] = getXY(e);
-		floater.tab = e.target;
-		floater.stickyX = true;
-		floater.stickyY = true;
-		floater.startScrollTop = tabList.scrollTop;
+		resetFloater(e);
 		popupMenu.setTimer();
 	});
 	window.addEventListener('ontouchmove' in window ? 'touchmove' : 'mousemove', e => {
@@ -367,9 +394,8 @@
 		const dy = y - floater.startY;
 		if (floater.stickyX) {
 			if (dy !== 0) {
-				const newScrollTop = floater.startScrollTop - dy;
-				slipSpeed = newScrollTop - tabList.scrollTop;
-				tabList.scrollTo(0, newScrollTop);
+				slipScroll.setLastData();
+				tabList.scrollTo(0, floater.startScrollTop - dy);
 			}
 			if (Math.abs(dx) < FLOAT_TRIGGER) return;
 			floater.stickyX = false;
@@ -405,7 +431,7 @@
 			}
 			// scroll tablist.
 			if (floater.stickyX) {
-				slipScroll();
+				slipScroll.start();
 			}
 			// move tab.
 			if (!floater.stickyY) {
