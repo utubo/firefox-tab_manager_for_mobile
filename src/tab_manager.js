@@ -1,6 +1,24 @@
 (() => {
 	'use strict';
 
+	browser.runtime.sendMessage('loadIni').then(res => {
+		// apply theme fist!
+		if (res.theme === 'dark') {
+			browser.tabs.insertCSS({ file: chrome.extension.getURL('theme_dark.css') });
+		}
+		if (res.css) {
+			browser.tabs.insertCSS({ code: res.css });
+		}
+		// other settings
+		activeTabId = res.activeTabId;
+		savedTabs = res.tabs;
+		browser.tabs.query({}).then(_tabs => {
+			closeOtherTabManagerTabs(_tabs);
+			listupTabs(_tabs);
+		});
+	});
+
+
 	// utils (basic) ------------------
 	const byId = id => document.getElementById(id);
 	const byClass = (p, clazz) => p.getElementsByClassName(clazz)[0];
@@ -46,10 +64,11 @@
 	};
 
 	const titleOrFileName = tab => {
+		if (!tab.url) return tab.title; // no filename.
 		if (tab.title && tab.title !== tab.url && tab.title !== tab.url.replace(/^https?:\/\//, '')) return tab.title;
 		const s = tab.url.replace(/[?#].*/, '').replace(/\/+$/, '');
 		if (s.match(/\/([^\/]+)$/)) return RegExp.$1;
-		return url;
+		return tab.url;
 	};
 
 	// tools --------------------------
@@ -79,7 +98,13 @@
 				floater.hide();
 			}, 350);
 		},
+		fixOffsetTop: () => {
+			if (!floater.tab) return;
+			floater.offsetTop = floater.tab.offsetTop + tabList.offsetTop - tabList.scrollTop;
+		},
 		show: () => {
+			floater.fixOffsetTop();
+			floater.setPosition(0, 0, true);
 			if (floater.div.firstChild) floater.div.removeChild(floater.div.firstChild);
 			floater.div.appendChild(floater.tab.cloneNode(true));
 			floater.div.classList.remove('transparent');
@@ -284,17 +309,9 @@
 			tabs.push(li);
 			tabList.appendChild(li);
 		}
+		tabList.scrollTo(0, byClass(tabList, 'tab').offsetTop);
 		activeTab && window.setTimeout(() => { activeTab.scrollIntoView(); });
 	};
-
-	browser.runtime.sendMessage('').then(res => {
-		activeTabId = res.activeTabId;
-		savedTabs = res.tabs;
-		browser.tabs.query({}).then(_tabs => {
-			closeOtherTabManagerTabs(_tabs);
-			listupTabs(_tabs);
-		});
-	});
 
 	const menuItems = document.getElementsByClassName('menuitem');
 	for (let menuItem of menuItems) {
@@ -316,18 +333,29 @@
 			browser.tabs.remove(TAB_MANAGER_ID);
 		}
 	});
+
+	let slipTimer;
+	let slipSpeed = 0;
+	const slipScroll = () => {
+		tabList.scrollBy(0, slipSpeed);
+		slipSpeed *= 0.95;
+		if (1 <= Math.abs(slipSpeed)) {
+			slipTimer = setTimeout(slipScroll, 16);
+		}
+	};
+
 	const getXY = e => e.touches ? [e.touches[0].clientX, e.touches[0].clientY] : [e.pageX, e.pageY];
 	tabList.addEventListener('ontouchstart' in window ? 'touchstart' : 'mousedown', e => {
 		touchmoved = false;
 		popupMenu.clearTimer();
+		clearTimeout(slipTimer);
 		if (!e.target.classList.contains('tab')) return;
 		e.preventDefault();
 		[floater.startX, floater.startY] = getXY(e);
-		floater.offsetTop = e.target.offsetTop + tabList.offsetTop - tabList.scrollTop;
 		floater.tab = e.target;
 		floater.stickyX = true;
 		floater.stickyY = true;
-		floater.setPosition(0, 0, true);
+		floater.startScrollTop = tabList.scrollTop;
 		popupMenu.setTimer();
 	});
 	window.addEventListener('ontouchmove' in window ? 'touchmove' : 'mousemove', e => {
@@ -338,8 +366,14 @@
 		const dx = x - floater.startX;
 		const dy = y - floater.startY;
 		if (floater.stickyX) {
+			if (dy !== 0) {
+				const newScrollTop = floater.startScrollTop - dy;
+				slipSpeed = newScrollTop - tabList.scrollTop;
+				tabList.scrollTo(0, newScrollTop);
+			}
 			if (Math.abs(dx) < FLOAT_TRIGGER) return;
 			floater.stickyX = false;
+			floater.startY = y;
 			floater.show();
 		}
 		// these does not work.
@@ -369,7 +403,11 @@
 				browser.tabs.remove(TAB_MANAGER_ID);
 				return;
 			}
-			// swipe a list item.
+			// scroll tablist.
+			if (floater.stickyX) {
+				slipScroll();
+			}
+			// move tab.
 			if (!floater.stickyY) {
 				const y = floater.tab.offsetTop + floater.dy;
 				let p = tabs.length;
@@ -392,7 +430,10 @@
 						browser.tabs.move(targetId, { index: _tab.index });
 					});
 				}
-			} else if (DELETE_TRIGGER < Math.abs(floater.dx)) {
+				return;
+			}
+			// swipe out.
+			if (DELETE_TRIGGER < Math.abs(floater.dx)) {
 				floater.slideout();
 				window.setTimeout(() => {
 					if (!tabs.length) {
