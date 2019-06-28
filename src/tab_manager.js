@@ -35,8 +35,9 @@
 	// const -------------------------
 	const FLOAT_TRIGGER = 32;
 	const DELETE_TRIGGER = 80;
+	const SLIDEOUT_MSEC = 350;
+	const COLLAPSE_MSEC = 510;
 	const CLOSE_WAIT_MSEC = 600;
-	const LONG_TAP_MSEC = 400;
 	const TAB_MANAGER_URL = chrome.extension.getURL('tab_manager.html');
 
 	// fields -------------------------
@@ -61,7 +62,7 @@
 		tabs.splice(tabs.indexOf(li), 1);
 		browser.tabs.remove(tabId(li));
 		li.classList.add('removing');
-		window.setTimeout(() => { li.parentNode.removeChild(li); }, 510);
+		window.setTimeout(() => { li.parentNode.removeChild(li); }, COLLAPSE_MSEC);
 	};
 
 	const titleOrFileName = tab => {
@@ -95,7 +96,7 @@
 				remove(target);
 				target = null;
 				floater.end();
-			}, 350);
+			}, SLIDEOUT_MSEC);
 		},
 		setPosition: (x, y) => {
 			floater.tab.style.transform = `translate(${x}px,${y}px)`;
