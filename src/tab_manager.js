@@ -30,6 +30,7 @@
 		document.execCommand('copy');
 		document.body.removeChild(work);
 	};
+	const getXY = e => e.touches ? [e.touches[0].clientX, e.touches[0].clientY] : [e.pageX, e.pageY];
 
 	// const -------------------------
 	const FLOAT_TRIGGER = 32;
@@ -74,47 +75,30 @@
 	// tools --------------------------
 	const floater = {
 		tab: null,
-		div: byId('floater'),
-		hide: () => {
-			if (floater.div.classList.contains('slideout')) return;
-			floater.div.classList.add('hide');
-			if (floater.div.firstChild) {
-				floater.div.removeChild(floater.div.firstChild);
-			}
-			if (floater.tab) {
-				floater.tab.parentNode.classList.remove('float-target-parent');
-				floater.tab.classList.remove('float-target');
-				floater.tab = null;
-			}
-		},
-		slideout: () => {
-			floater.div.classList.add('slideout');
-			window.setTimeout(() => {
-				floater.div.style.left = (floater.dx < 0 ? '-' : '') +  window.innerWidth + 'px';
-			});
-			window.setTimeout(() => {
-				floater.div.classList.remove('slideout');
-				remove(floater.tab);
-				floater.hide();
-			}, 350);
-		},
-		fixOffsetTop: () => {
-			if (!floater.tab) return;
-			floater.offsetTop = floater.tab.offsetTop + tabList.offsetTop - tabList.scrollTop;
-		},
-		show: () => {
-			floater.fixOffsetTop();
-			floater.setPosition(0, 0, true);
-			if (floater.div.firstChild) floater.div.removeChild(floater.div.firstChild);
-			floater.div.appendChild(floater.tab.cloneNode(true));
-			floater.div.classList.remove('transparent');
-			floater.div.classList.remove('hide');
+		start: () => {
 			floater.tab.classList.add('float-target');
 			floater.tab.parentNode.classList.add('float-target-parent');
 		},
-		setPosition: (x, y, force) => {
-			if (x !== floater.dx || force) floater.div.style.left = x + 'px';
-			if (y !== floater.dy || force) floater.div.style.top = (y  + floater.offsetTop) + 'px';
+		end: () => {
+			tabList.classList.remove('float-target-parent');
+			if (!floater.tab) return;
+			floater.setPosition(0, 0);
+			floater.tab.classList.remove('float-target');
+			floater.tab = null;
+		},
+		slideout: () => {
+			floater.tab.classList.add('slideout');
+			floater.setPosition((floater.dx < 0 ? -1 : 1) * window.innerWidth, floater.dy);
+			let target = floater.tab;
+			floater.tab = null;
+			window.setTimeout(() => {
+				remove(target);
+				target = null;
+				floater.end();
+			}, 350);
+		},
+		setPosition: (x, y) => {
+			floater.tab.style.transform = `translate(${x}px,${y}px)`;
 			floater.dx = x;
 			floater.dy = y;
 		}
@@ -125,7 +109,8 @@
 		reloadSelectedTabs: () => {
 			for (let tab of tabs) {
 				if (checked(tab)) {
-					tab.classList.add('reloading');
+					tab.classList.remove('reloading');
+					setTimeout(() => { tab.classList.add('reloading'); }, 10);
 					browser.tabs.reload(tabId(tab));
 				}
 			}
@@ -163,17 +148,17 @@
 		}
 	};
 
+	// contextmenu ---------
 	const popupMenu = {
-		// long tap to popup -----------
 		popuped: false,
 		div: byId('popupmenu'),
-		popup: () => {
-			popupMenu.tab = floater.tab;
+		popup: target => {
+			popupMenu.tab = target;
 			byId('menuTitle').textContent = byClass(popupMenu.tab, 'title').textContent;
 			byId('menuUrl').textContent = byClass(popupMenu.tab, 'url').textContent;
 			tabMenu.classList.remove('hide');
 			recentList.classList.add('hide');
-			floater.hide();
+			floater.end();
 			popupMenu.div.classList.add('popuped');
 			popupMenu.popuped = true;
 		},
@@ -195,7 +180,7 @@
 			recentList.appendChild(items);
 			tabMenu.classList.add('hide');
 			recentList.classList.remove('hide');
-			floater.hide();
+			floater.end();
 			popupMenu.div.classList.add('popuped');
 			popupMenu.popuped = true;
 		},
@@ -203,15 +188,6 @@
 			if (!popupMenu.popuped) return;
 			popupMenu.popuped = false;
 			popupMenu.div.classList.remove('popuped');
-		},
-		popupTimer: null,
-		clearTimer: () => {
-			window.clearTimeout(popupMenu.popupTimer);
-		},
-		setTimer: () => {
-			popupMenu.popuped = false;
-			popupMenu.clearTimer();
-			popupMenu.popupTimer = window.setTimeout(popupMenu.popup, LONG_TAP_MSEC);
 		},
 		// actions --------------------
 		closeThisTab: () => {
@@ -259,15 +235,6 @@
 			}
 			copyToClipbd(lines.join('\n'));
 		},
-	};
-
-	// others -------------------------
-	const slideout = (tab, startX) => {
-		tab.style.marginLeft = startX + 'px';
-		window.setTimeout(() => { tab.classList.add('slideout'); });
-		window.setTimeout(() => { tab.style.marginLeft = (startX < 0 ? '-' : '') +  window.innerWidth + 'px'; });
-		window.setTimeout(() => { tab.classList.remove('slideout'); }, 500);
-		window.setTimeout(() => { remove(tab); }, 600);
 	};
 
 	// setup tab manager page ---------
@@ -334,36 +301,15 @@
 		}
 	});
 
-	const slipScroll = {
-		timer: null,
-		speed: 0,
-		lastMoveTime: 0,
-		lastScrollTop: 0,
-		setLastData: function() {
-			this.lastMoveTime = new Date();
-			this.lastScrollTop = tabList.scrollTop;
-		},
-		clearTimer: function() {
-			clearTimeout(this.timer);
-			this.timer = null;
-		},
-		start: function() {
-			const dt = new Date().getTime() - this.lastMoveTime.getTime();
-			if (100 < dt) return;
-			const dy = tabList.scrollTop - this.lastScrollTop;
-			this.speed = dy * 16 / dt / 4;
-			slipScroll.clearTimer();
-			slipScroll.scroll();
-		},
-		scroll: function() {
-			slipScroll.speed *= 0.95;
-			if (1 <= Math.abs(slipScroll.speed)) {
-				tabList.scrollTo(0, tabList.scrollTop + slipScroll.speed);
-				slipScroll.clearTimer();
-				slipScroll.timer = setTimeout(slipScroll.scroll, 16);
-			}
+	addEventListener('contextmenu', e => {
+		let target = e.target;
+		while (target && target.classList && !target.classList.contains('tab')) {
+			target = target.parentNode;
 		}
-	};
+		if (!target) return;
+		e.preventDefault();
+		popupMenu.popup(e.target);
+	});
 
 	const resetFloater = e => {
 		floater.tab = e.target;
@@ -372,48 +318,34 @@
 		floater.dy = 0;
 		floater.stickyX = true;
 		floater.stickyY = true;
-		floater.startScrollTop = tabList.scrollTop;
 	};
 
-	const getXY = e => e.touches ? [e.touches[0].clientX, e.touches[0].clientY] : [e.pageX, e.pageY];
 	tabList.addEventListener('ontouchstart' in window ? 'touchstart' : 'mousedown', e => {
 		touchmoved = false;
-		popupMenu.clearTimer();
-		slipScroll.clearTimer();
 		if (!e.target.classList.contains('tab')) return;
-		e.preventDefault();
 		resetFloater(e);
-		popupMenu.setTimer();
 	});
+
 	window.addEventListener('ontouchmove' in window ? 'touchmove' : 'mousemove', e => {
 		if (!floater.tab) return;
-		popupMenu.clearTimer();
 		touchmoved = true;
 		const [x, y] = getXY(e);
 		const dx = x - floater.startX;
 		const dy = y - floater.startY;
 		if (floater.stickyX) {
-			if (dy !== 0) {
-				slipScroll.setLastData();
-				tabList.scrollTo(0, floater.startScrollTop - dy);
-			}
 			if (Math.abs(dx) < FLOAT_TRIGGER) return;
 			floater.stickyX = false;
 			floater.startY = y;
-			floater.show();
+			floater.start();
 		}
-		// these does not work.
-		// e.preventDefault();
-		// e.stopPropagation();
-		// e.stopImmediatePropagation();
 		if (floater.stickyY && browser.tabs.move && FLOAT_TRIGGER < Math.abs(dy)) {
 			floater.stickyY = false;
 		}
 		floater.setPosition(dx, floater.stickyY ? 0 : dy);
 	});
+
 	window.addEventListener('ontouchend' in window ? 'touchend' : 'mouseup', e => {
 		if (!floater.tab) return;
-		popupMenu.clearTimer();
 		try {
 			// ignore when target is not a list item.
 			if (e.target.classList.contains('menuitem')) {
@@ -428,10 +360,6 @@
 				browser.tabs.update(tabId(floater.tab), { active: true });
 				browser.tabs.remove(TAB_MANAGER_ID);
 				return;
-			}
-			// scroll tablist.
-			if (floater.stickyX) {
-				slipScroll.start();
 			}
 			// move tab.
 			if (!floater.stickyY) {
@@ -470,7 +398,7 @@
 		} catch (ex) {
 			alert(ex.message);
 		} finally {
-			floater.hide();
+			floater.end();
 		}
 	});
 

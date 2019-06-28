@@ -36,6 +36,9 @@ body {
 	user-select: none;
 	width: 100%;
 }
+.float-target {
+	z-index: 1;
+}
 .float-target-parent {
 	overflow-y: hidden; /* 'e.preventDefault()' does not work. */
 }
@@ -98,6 +101,7 @@ body {
 	padding: 4px;
 	position: absolute;
 	width: 100vw;
+	z-index: 2;
 }
 .tool-button {
 	display: inline-block;
@@ -106,9 +110,10 @@ body {
 	vertical-align: middle;
 }
 .removing {
-	overflow: hidden;
+	border-width: 0;
 	height: 0;
 	opacity: 0;
+	overflow: hidden;
 	transition: all .4s;
 }
 .reloading {
@@ -116,24 +121,13 @@ body {
 }
 @keyframes reloading {
 	0% { background: #f90; }
-	100% { background: #f9f9fa; }
-}
-#floater {
-	background: #f9f9fa;
-	border-top: 1px solid #d7d7db;
-	pointer-events: none;
-	position: fixed;
-	width: 100%;
+	100% { }
 }
 .hide {
 	display: none;
 }
 .slideout {
-	transition: left 0.3s;
-}
-.float-target {
-	border-left: none;
-	opacity: 0;
+	transition: all 0.3s;
 }
 .popupmenu {
 	align-items: center;
@@ -148,7 +142,7 @@ body {
 	transition: opacity .2s;
 	user-select: none;
 	width: 100%;
-	z-index: 1;
+	z-index: 3;
 }
 .popuped {
 	opacity: 1;
