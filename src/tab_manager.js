@@ -15,9 +15,9 @@
 		browser.tabs.query({}).then(_tabs => {
 			closeOtherTabManagerTabs(_tabs);
 			listupTabs(_tabs);
+			byId('cover').classList.add('transparent');
 		});
 	});
-
 
 	// utils (basic) ------------------
 	const byId = id => document.getElementById(id);
@@ -402,7 +402,5 @@
 			floater.end();
 		}
 	});
-
-	byId('cover').classList.add('transparent');
 })();
 
