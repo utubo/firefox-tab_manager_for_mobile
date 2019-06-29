@@ -3,8 +3,8 @@
 
 	browser.runtime.sendMessage('loadIni').then(res => {
 		// apply theme fist!
-		if (res.theme === 'dark') {
-			browser.tabs.insertCSS({ file: chrome.extension.getURL('theme_dark.css') });
+		if (res.theme && res.theme !== 'default') {
+			browser.tabs.insertCSS({ file: chrome.extension.getURL(`themes/${res.theme}.css`) });
 		}
 		if (res.css) {
 			browser.tabs.insertCSS({ code: res.css });

@@ -78,7 +78,7 @@ body {
 	color: #666;
 }
 .checkbox {
-	background-image: url(./icons/checkbox.svg);
+	background-image: url(../icons/checkbox.svg);
 	background-position: right top;
 	background-repeat: no-repeat;
 	background-size: 32px 32px;
@@ -89,7 +89,7 @@ body {
 	width: 48px;
 }
 .checked {
-	background-image: url(./icons/checked.svg);
+	background-image: url(../icons/checked.svg);
 }
 .toolbar {
 	background: #eee;
@@ -196,7 +196,7 @@ body {
 	width: 32px;
 }
 .recentlist-title {
-	background: url('./icons/recent.svg') no-repeat center right;
+	background: url('../icons/recent.svg') no-repeat center right;
 	background-size: 5.5em;
 	border-bottom: 2px solid #f90;
 	max-width: 100%;
@@ -225,11 +225,11 @@ body {
 .recent:last-child {
 	border: none;
 }
-#closeThisTab::before { content: url(./icons/closeThisTab.svg); }
-#closeOtherTabs::before { content: url(./icons/closeOtherTabs.svg); }
-#cloneThisTab::before { content: url(./icons/cloneThisTab.svg); }
-#closeLeftTabsFromThis::before { content: url(./icons/closeLeftTabsFromThis.svg); }
-#closeRightTabsFromThis::before { content: url(./icons/closeRightTabsFromThis.svg); }
-#copyTitleAndUrl::before { content: url(./icons/copyTitleAndUrl.svg); }
-#copyTitleAndURLofAllCheckedTabs::before { content: url(./icons/copyTitleAndURLofAllCheckedTabs.svg); }
+#closeThisTab::before { content: url(../icons/closeThisTab.svg); }
+#closeOtherTabs::before { content: url(../icons/closeOtherTabs.svg); }
+#cloneThisTab::before { content: url(../icons/cloneThisTab.svg); }
+#closeLeftTabsFromThis::before { content: url(../icons/closeLeftTabsFromThis.svg); }
+#closeRightTabsFromThis::before { content: url(../icons/closeRightTabsFromThis.svg); }
+#copyTitleAndUrl::before { content: url(../icons/copyTitleAndUrl.svg); }
+#copyTitleAndURLofAllCheckedTabs::before { content: url(../icons/copyTitleAndURLofAllCheckedTabs.svg); }
 
