@@ -347,6 +347,7 @@
 
 	window.addEventListener('ontouchend' in window ? 'touchend' : 'mouseup', e => {
 		if (!floater.tab) return;
+		if (e.button == 2) return;// mouse right button
 		try {
 			// ignore when target is not a list item.
 			if (e.target.classList.contains('menuitem')) {
