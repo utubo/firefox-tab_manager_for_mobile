@@ -50,8 +50,10 @@
 	// DOM cache ---------------------
 	const tabs = []; // <li>
 	const tabList = byId('tabList'); // <ul>
-	const tabMenu = byId('tabMenu'); // <ul>
-	const recentList = byId('recentList'); // <ul>
+	const tabMenu = byId('tabMenu');
+	const recentList = byId('recentList');
+	const confirmDlg = byId('confirm');
+	const modals = [tabMenu, recentList, confirmDlg];
 
 	// utils for tab manager ---------
 	const tabId = li => li.id.replace(/^tab_/, '') | 0;
@@ -63,6 +65,22 @@
 		browser.tabs.remove(tabId(li));
 		li.classList.add('removing');
 		window.setTimeout(() => { li.parentNode.removeChild(li); }, COLLAPSE_MSEC);
+	};
+
+	const removeTabs = tabs => {
+		if (tabs.length < 1) {
+			return;
+		}
+		if (tabs.length == 1) {
+			remove(tabs[0]);
+			return;
+		}
+		const msg = chrome.i18n.getMessage('closeNTabs').replace('${count}', tabs.length);
+		modal.popupConfirm(msg, () => {
+			for (let i = tabs.length - 1; 0 <= i; i--) {
+				remove(tabs[i]);
+			}
+		});
 	};
 
 	const titleOrFileName = tab => {
@@ -106,7 +124,7 @@
 	};
 
 	// actions ------------------------
-	const toolButtons = {
+	const toolButtonActions = {
 		reloadSelectedTabs: () => {
 			for (let tab of tabs) {
 				if (checked(tab)) {
@@ -117,53 +135,67 @@
 			}
 		},
 		closeSelectedTabs: () => {
+			let list = [];
 			for (let tab of [].concat(tabs)) {
-				if (checked(tab)) remove(tab);
+				if (checked(tab)) list.push(tab);
 			}
+			removeTabs(list);
 		},
 		closeAllTabs: () => {
-			for (let tab of [].concat(tabs)) {
-				remove(tab);
-			}
+			removeTabs(tabs);
 		},
 		closeUnselectedTabs: () => {
+			let list = [];
 			for (let tab of [].concat(tabs)) {
-				if (!checked(tab)) remove(tab);
+				if (!checked(tab)) list.push(tab);
 			}
+			removeTabs(list);
 		},
 		closeLeftTabs: () => {
+			let list = [];
 			for (let tab of [].concat(tabs)) {
-				if (checked(tab)) return;
-				remove(tab);
+				if (checked(tab)) break;
+				list.push(tab);
 			}
+			removeTabs(list);
 		},
 		closeRightTabs: () => {
+			let list = [];
 			for (let i = tabs.length - 1; 0 <= i; i --) {
 				const tab = tabs[i];
-				if (checked(tab)) return;
-				remove(tab);
+				if (checked(tab)) break;
+				list.push(tab);
 			}
+			removeTabs(list);
 		},
 		recent: () => {
-			popupMenu.popupAsRecent();
+			modal.popupRecent();
 		}
 	};
 
 	// contextmenu ---------
-	const popupMenu = {
+	const modal = {
 		popuped: false,
-		div: byId('popupmenu'),
-		popup: target => {
-			popupMenu.tab = target;
-			byId('menuTitle').textContent = byClass(popupMenu.tab, 'title').textContent;
-			byId('menuUrl').textContent = byClass(popupMenu.tab, 'url').textContent;
-			tabMenu.classList.remove('hide');
-			recentList.classList.add('hide');
+		div: byId('modal'),
+		show: target => {
+			for (let div of modals) {
+				if (div == target) {
+					div.classList.remove('hide');
+				} else {
+					div.classList.add('hide');
+				}
+			}
 			floater.end();
-			popupMenu.div.classList.add('popuped');
-			popupMenu.popuped = true;
+			modal.div.classList.add('popuped');
+			modal.popuped = true;
 		},
-		popupAsRecent: async () => {
+		popupTabMenu: target => {
+			modal.tab = target;
+			byId('menuTitle').textContent = byClass(modal.tab, 'title').textContent;
+			byId('menuUrl').textContent = byClass(modal.tab, 'url').textContent;
+			modal.show(tabMenu);
+		},
+		popupRecent: async () => {
 			const res = await browser.storage.local.get('tab_manager');
 			if (!res && !res.tab_manager) return;
 			recent = res.tab_manager.recent;
@@ -179,46 +211,48 @@
 				items.appendChild(li);
 			}
 			recentList.appendChild(items);
-			tabMenu.classList.add('hide');
-			recentList.classList.remove('hide');
-			floater.end();
-			popupMenu.div.classList.add('popuped');
-			popupMenu.popuped = true;
+			modal.show(recentList);
+		},
+		popupConfirm: async (text, func) => {
+			byId('confirmMessage').textContent = text;
+			byId('ok').onclick = func;
+			byId('cancel').onclick = modal.close;
+			modal.show(confirmDlg);
 		},
 		close: () => {
-			if (!popupMenu.popuped) return;
-			popupMenu.popuped = false;
-			popupMenu.div.classList.remove('popuped');
+			if (!modal.popuped) return;
+			modal.popuped = false;
+			modal.div.classList.remove('popuped');
 		},
 		// actions --------------------
 		closeThisTab: () => {
-			remove(popupMenu.tab);
+			remove(modal.tab);
 		},
 		closeOtherTabs: () => {
 			if (tabs.length <= 1) return;
 			for (let tab of [].concat(tabs)) {
-				if (tab === popupMenu.tab) continue;
+				if (tab === modal.tab) continue;
 				remove(tab);
 			}
 		},
 		cloneThisTab: () => {
 			if (browser.tabs.duplicate) {
-				browser.tabs.duplicate(tabId(popupMenu.tab));
+				browser.tabs.duplicate(tabId(modal.tab));
 			} else {
-				browser.tabs.create({ url: byClass(popupMenu.tab, 'url').textContent });
+				browser.tabs.create({ url: byClass(modal.tab, 'url').textContent });
 			}
 			browser.tabs.remove(TAB_MANAGER_ID);
 		},
 		closeLeftTabsFromThis: () => {
 			for (let tab of [].concat(tabs)) {
-				if (tab === popupMenu.tab) return;
+				if (tab === modal.tab) return;
 				remove(tab);
 			}
 		},
 		closeRightTabsFromThis: () => {
 			for (let i = tabs.length - 1; 0 <= i; i --) {
 				const tab = tabs[i];
-				if (tab === popupMenu.tab) return;
+				if (tab === modal.tab) return;
 				remove(tab);
 			}
 		},
@@ -226,13 +260,13 @@
 			return byClass(tab, 'title').textContent + '\n' + byClass(tab, 'url').textContent + '\n';
 		},
 		copyTitleAndUrl: () => {
-			copyToClipbd(popupMenu.titleAndUrl(popupMenu.tab));
+			copyToClipbd(modal.titleAndUrl(modal.tab));
 		},
 		copyTitleAndURLofAllCheckedTabs: () => {
 			const lines = [];
 			for (let tab of tabs) {
 				if (!checked(tab)) continue;
-				lines.push(popupMenu.titleAndUrl(tab));
+				lines.push(modal.titleAndUrl(tab));
 			}
 			copyToClipbd(lines.join('\n'));
 		},
@@ -286,14 +320,19 @@
 		menuItem.textContent = chrome.i18n.getMessage(menuItem.id);
 	}
 
+	const toolButtons = document.getElementsByClassName('tool-button');
+	for (let toolButton of toolButtons) {
+		toolButton.setAttribute('title', chrome.i18n.getMessage(toolButton.id));
+	}
+
 	window.addEventListener('click', e => {
-		popupMenu.close();
+		modal.close();
 		if (e.target.classList.contains('menuitem')) {
-			popupMenu[e.target.id]();
+			modal[e.target.id]();
 			e.preventDefault();
 		} else if (e.target.classList.contains('tool-button')) {
 			e.preventDefault();
-			toolButtons[e.target.id]();
+			toolButtonActions[e.target.id]();
 		} else if (e.target.classList.contains('checkbox')) {
 			e.target.classList.toggle('checked');
 		} else if (e.target.classList.contains('recent')) {
@@ -309,7 +348,7 @@
 		}
 		if (!target) return;
 		e.preventDefault();
-		popupMenu.popup(e.target);
+		modal.popupTabMenu(e.target);
 	});
 
 	const resetFloater = e => {
@@ -353,7 +392,7 @@
 			if (e.target.classList.contains('menuitem')) {
 				return;
 			}
-			if (popupMenu.popuped) {
+			if (modal.popuped) {
 				return;
 			}
 			e.preventDefault();

@@ -129,7 +129,7 @@ body {
 .slideout {
 	transition: all 0.3s;
 }
-.popupmenu {
+.modal {
 	align-items: center;
 	background: rgba(0,0,0,.5);
 	display: flex;
@@ -224,6 +224,32 @@ body {
 }
 .recent:last-child {
 	border: none;
+}
+.confirm {
+	max-height: 100%;
+	max-width: 100%;
+	min-width: 30vw;
+	text-align: center;
+}
+.confirm-message {
+	display: inline-block;
+	margin: 20px 20px 10px 20px;
+	max-height: 100%;
+	max-width: 100%;
+	overflow: hidden;
+	text-align: left;
+}
+.buttons {
+	text-align: center;
+	width: 100%;
+}
+.button {
+	display: inline-block;
+	padding: 14px 0;
+	width: 30vw;
+}
+#cancel {
+	border-right: 1px solid;
 }
 #closeThisTab::before { content: url(../icons/closeThisTab.svg); }
 #closeOtherTabs::before { content: url(../icons/closeOtherTabs.svg); }

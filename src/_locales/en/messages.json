@@ -7,6 +7,21 @@
 		"message": "This adds Tab-Manager page.",
 		"description": "Description of the extension."
 	},
+	"reloadSelectedTabs": {
+		"message": "Reload checked tabs"
+	},
+	"closeSelectedTabs": {
+		"message": "Close checked tabs"
+	},
+	"closeUnselectedTabs": {
+		"message": "Close unchecked tabs"
+	},
+	"closeAllTabs": {
+		"message": "Close all tabs"
+	},
+	"recent": {
+		"message": "Recent Urls"
+	},
 	"closeThisTab": {
 		"message": "Close this"
 	},
@@ -30,6 +45,9 @@
 	},
 	"recentTabs": {
 		"message": "Recent Urls"
+	},
+	"closeNTabs": {
+		"message": "Close ${count} tabs."
 	}
 }
 

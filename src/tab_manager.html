@@ -29,7 +29,7 @@
 			<img id="closeAllTabs" class="tool-button" src="icons/closeAllTabs.svg">
 			<img id="recent" class="tool-button" src="icons/recent.svg">
 		</div>
-		<div id="popupmenu" class="popupmenu">
+		<div id="modal" class="modal">
 			<div class="menuitem-container">
 				<div id="tabMenu">
 					<div class="menu-title" id="menuTitle"></div>
@@ -50,6 +50,13 @@
 					<div id="recentTemplate" class="recent">
 						<span class="title"></span>
 						<span class="url"></span>
+					</div>
+				</div>
+				<div class="confirm hide" id="confirm">
+					<div class="confirm-message" id="confirmMessage"></div>
+					<div class="buttons">
+						<span class="button" id="cancel">CANCEL</span>
+						<span class="button" id="ok">OK</span>
 					</div>
 				</div>
 			</div>

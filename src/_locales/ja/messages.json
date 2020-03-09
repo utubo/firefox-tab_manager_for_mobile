@@ -7,6 +7,21 @@
 		"message": "タブを管理するページを提供します",
 		"description": "Description of the extension."
 	},
+	"reloadSelectedTabs": {
+		"message": "選択したタブを再読み込みする"
+	},
+	"closeSelectedTabs": {
+		"message": "選択したタブを閉じる"
+	},
+	"closeUnselectedTabs": {
+		"message": "選択されていないタブを閉じる"
+	},
+	"closeAllTabs": {
+		"message": "全てのタブを閉じる"
+	},
+	"recent": {
+		"message": "最近閉じたURL"
+	},
 	"closeThisTab": {
 		"message": "タブを閉じる"
 	},
@@ -30,6 +45,9 @@
 	},
 	"recentTabs": {
 		"message": "最近閉じたURL"
+	},
+	"closeNTabs": {
+		"message": "${count} 個のタブを閉じます"
 	}
 }
 
