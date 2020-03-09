@@ -2,7 +2,7 @@ var TabMan = TabMan || {
 	activeTabId: null,
 	tabs: {},
 	recent: [],
-	recentMaxCount: 10,
+	recentMaxCount: 20,
 	theme: 'default'
 };
 (() => {
