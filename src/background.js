@@ -68,28 +68,41 @@ var TabMan = TabMan || {
 	};
 
 	// save tabs ----------------------
-	const refleshTabs = () => {
-		browser.tabs.query({}).then(tabs => {
-			const newTabs = {};
-			for (let tab of tabs) {
-				if (tab.url === TAB_MANAGER_URL) continue;
-				if (!tab.title && tab.url === 'about:blank' && TabMan.tabs[tab.id]) {
-					newTabs[tab.id] = TabMan.tabs[tab.id];
-				} else {
-					newTabs[tab.id] = { title: tab.title, url: tab.url };
-				}
+	const refleshTabs = async () => {
+		const tabs = await browser.tabs.query({});
+		const newTabs = {};
+		let index = -1;
+		for (let tab of tabs) {
+			index ++;
+			if (!tab.title && tab.url === 'about:blank' && TabMan.tabs[tab.id]) {
+				newTabs[tab.id] = TabMan.tabs[tab.id];
+			} else {
+				newTabs[tab.id] = { title: tab.title, url: tab.url };
 			}
-			TabMan.tabs = newTabs;
-		});
+		}
+		TabMan.tabs = newTabs;
 		saveIni();
 	};
 	let refleshTabsTimer;
-	const refleshTabsLezy = (id, info, tab) => {
+	const refleshTabsLezy = () => {
 		window.clearTimeout(refleshTabsTimer);
-		refleshTabsTimer = window.setTimeout(refleshTabs, 1000);
+		refleshTabsTimer = window.setTimeout(refleshTabs, 300);
 	};
 
-	browser.tabs.onUpdated.addListener(refleshTabsLezy);
+	let saveIniTimer;
+	const saveIniLezy = () => {
+		window.clearTimeout(saveIniTimer);
+		saveIniTimer = window.setTimeout(saveIni, 300);
+	};
+	const applyNewTabInfo = (id, info, tab) => {
+		let t = TabMan.tabs[id] || {};
+		t.url = tab.url;
+		t.title = info.title + info.favIconUrl;
+		TabMan.tabs[id] = t;
+		saveIniLezy();
+	};
+
+	browser.tabs.onUpdated.addListener(applyNewTabInfo);
 
 	browser.tabs.onRemoved.addListener(refleshTabsLezy);
 
