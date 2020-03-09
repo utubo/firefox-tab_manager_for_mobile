@@ -97,7 +97,7 @@ var TabMan = TabMan || {
 	const applyNewTabInfo = (id, info, tab) => {
 		let t = TabMan.tabs[id] || {};
 		t.url = tab.url;
-		t.title = info.title + info.favIconUrl;
+		t.title = tab.title;
 		TabMan.tabs[id] = t;
 		saveIniLezy();
 	};
