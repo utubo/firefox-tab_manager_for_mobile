@@ -3,7 +3,8 @@ var TabMan = TabMan || {
 	tabs: {},
 	recent: [],
 	recentMaxCount: 20,
-	theme: 'default'
+	theme: 'default',
+	autoClose: false
 };
 (() => {
 	'use strict';
@@ -41,7 +42,8 @@ var TabMan = TabMan || {
 				recent: TabMan.recent,
 				recentMaxCount: TabMan.recentMaxCount,
 				theme: TabMan.theme,
-				css: TabMan.css
+				css: TabMan.css,
+				autoClose: TabMan.autoClose
 			});
 		}
 	});
@@ -52,7 +54,8 @@ var TabMan = TabMan || {
 			recent: TabMan.recent,
 			recentMaxCount: TabMan.recentMaxCount,
 			theme: TabMan.theme,
-			css: TabMan.css
+			css: TabMan.css,
+			autoClose: TabMan.autoClose
 		} });
 	};
 
@@ -62,9 +65,10 @@ var TabMan = TabMan || {
 		if (!res.tab_manager) return;
 		TabMan.tabs = res.tab_manager.tabs;
 		TabMan.recent = res.tab_manager.recent || [];
-		TabMan.recentMaxCount = res.tab_manager.recentMaxCount || 10;
+		TabMan.recentMaxCount = res.tab_manager.recentMaxCount || 20;
 		TabMan.theme = res.tab_manager.theme;
-		TabMan.css = res.tab_manager.css;
+		TabMan.css = res.tab_manager.css || '';
+		TabMan.autoClose = res.tab_manager.autoClose;
 	};
 
 	// save tabs ----------------------

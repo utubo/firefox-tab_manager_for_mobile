@@ -48,6 +48,15 @@
 	},
 	"closeNTabs": {
 		"message": "Close ${count} tabs."
+	},
+	"Close Tab-manager when all tabs are closed.": {
+		"message": "Close Tab-manager when all tabs are closed."
+	},
+	"Theme": {
+		"message": "Theme"
+	},
+	"Style sheet": {
+		"message": "Style sheet"
 	}
 }
 

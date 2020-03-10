@@ -7,21 +7,28 @@
 		<link rel="icon" href="./icons/tabManager.png">
 		<style>
 			#css {
-				width: 90%;
+				width: 100%;
 				height: 10em;
 			}
 		</style>
 	</head>
-	<body>
+	<body class="browser-style">
 		<form>
+		<div class="browser-style">
+			<table><tr>
+				<td class="browser-style"><input type="checkbox" id="autoClose"></td>
+				<td class="browser-style"><label for="autoClose">Close Tab-manager when all tabs are closed.</label></td>
+			</tr></table>
+			<br>
 			<label for="theme">Theme</label><br>
-			<select id="theme">
+			<select id="theme" class="browser-style">
 				<option value="default">Default</option>
 				<option value="dark">Dark</option>
 			</select><br>
 			<br>
-			<label for="css">Style-sheet</label><br>
-			<textarea id="css"></textarea>
+			<label for="css">Style sheet</label><br>
+			<textarea id="css" class="browser-style"></textarea>
+		</div>
 		</form>
 		<script src="options.js"></script>
 	</body>

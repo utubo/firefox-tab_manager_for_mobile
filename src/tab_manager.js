@@ -10,6 +10,7 @@
 			browser.tabs.insertCSS({ code: res.css });
 		}
 		// other settings
+		autoClose = res.autoClose;
 		activeTabId = res.activeTabId;
 		savedTabs = res.tabs;
 		browser.tabs.query({}).then(_tabs => {
@@ -46,6 +47,7 @@
 	let savedTabs = {};
 	let recent = {};
 	let touchmoved = false;
+	let autoClose;
 
 	// DOM cache ---------------------
 	const tabs = []; // <li>
@@ -65,6 +67,9 @@
 		browser.tabs.remove(tabId(li));
 		li.classList.add('removing');
 		window.setTimeout(() => { li.parentNode.removeChild(li); }, COLLAPSE_MSEC);
+		if (autoClose) {
+			closeIfThereAreNotabsLazy();
+		}
 	};
 
 	const removeTabs = tabs => {
@@ -81,6 +86,17 @@
 				remove(tabs[i]);
 			}
 		});
+	};
+
+	let closeTimer = null;
+	const closeIfThereAreNotabsLazy = () => {
+		window.clearTimeout(closeTimer);
+		closeTimer = window.setTimeout(closeIfThereAreNotabs , CLOSE_WAIT_MSEC);
+	};
+	const closeIfThereAreNotabs = () => {
+		if (!tabs.length) {
+			browser.tabs.remove(TAB_MANAGER_ID);
+		}
 	};
 
 	const titleOrFileName = tab => {
@@ -311,8 +327,10 @@
 			tabs.push(li);
 			tabList.appendChild(li);
 		}
-		tabList.scrollTo(0, byClass(tabList, 'tab').offsetTop);
-		activeTab && window.setTimeout(() => { activeTab.scrollIntoView(); });
+		if (tabs.length) {
+			tabList.scrollTo(0, byClass(tabList, 'tab').offsetTop);
+			activeTab && window.setTimeout(() => { activeTab.scrollIntoView(); });
+		}
 	};
 
 	const menuItems = document.getElementsByClassName('menuitem');
@@ -430,11 +448,6 @@
 			// swipe out.
 			if (DELETE_TRIGGER < Math.abs(floater.dx)) {
 				floater.slideout();
-				window.setTimeout(() => {
-					if (!tabs.length) {
-						browser.tabs.remove(TAB_MANAGER_ID);
-					}
-				}, CLOSE_WAIT_MSEC);
 			}
 		} catch (ex) {
 			alert(ex.message);
@@ -442,5 +455,15 @@
 			floater.end();
 		}
 	});
+
+	// click back button go to "about:home" instead of quit firefox.
+	history.replaceState({ closeThisTab: true }, '');
+	history.pushState({ }, '');
+	window.addEventListener('popstate', e => {
+		if (e.state.closeThisTab) {
+			browser.tabs.remove(TAB_MANAGER_ID);
+		}
+	});
+
 })();
 
