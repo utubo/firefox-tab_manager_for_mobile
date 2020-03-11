@@ -2,7 +2,6 @@ var TabMan = TabMan || {
 	activeTabId: null,
 	tabs: {},
 	recent: [],
-	recentMaxCount: 20,
 	theme: 'default',
 	autoClose: false
 };
@@ -10,6 +9,7 @@ var TabMan = TabMan || {
 	'use strict';
 
 	const TAB_MANAGER_URL = chrome.extension.getURL('tab_manager.html');
+	const RECENT_MAX_COUNT = 20;
 	let pageActionClicked;
 
 	const openTabManagerPage = () => {
@@ -40,7 +40,6 @@ var TabMan = TabMan || {
 				activeTabId: TabMan.activeTabId,
 				tabs: TabMan.tabs,
 				recent: TabMan.recent,
-				recentMaxCount: TabMan.recentMaxCount,
 				theme: TabMan.theme,
 				css: TabMan.css,
 				autoClose: TabMan.autoClose
@@ -52,7 +51,6 @@ var TabMan = TabMan || {
 		await browser.storage.local.set({ 'tab_manager': {
 			tabs: TabMan.tabs,
 			recent: TabMan.recent,
-			recentMaxCount: TabMan.recentMaxCount,
 			theme: TabMan.theme,
 			css: TabMan.css,
 			autoClose: TabMan.autoClose
@@ -65,7 +63,6 @@ var TabMan = TabMan || {
 		if (!res.tab_manager) return;
 		TabMan.tabs = res.tab_manager.tabs;
 		TabMan.recent = res.tab_manager.recent || [];
-		TabMan.recentMaxCount = res.tab_manager.recentMaxCount || 20;
 		TabMan.theme = res.tab_manager.theme;
 		TabMan.css = res.tab_manager.css || '';
 		TabMan.autoClose = res.tab_manager.autoClose;
@@ -128,7 +125,7 @@ var TabMan = TabMan || {
 			TabMan.recent.splice(index, 1);
 		}
 		TabMan.recent.unshift({ title: tab.title, url: tab.url });
-		TabMan.recent.splice(TabMan.recentMaxCount);
+		TabMan.recent.splice(RECENT_MAX_COUNT);
 		saveIni();
 	});
 
