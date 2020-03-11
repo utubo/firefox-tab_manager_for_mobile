@@ -1,5 +1,5 @@
 body {
-	background: #f9f9fa;
+	background: #d7d7db;
 	box-sizing: border-box;
 	color: #444;
 	margin: 0;
@@ -23,7 +23,7 @@ body {
 }
 .tab-list {
 	display: block;
-	background: #d7d7db;
+	background: transparent;
 	border-top: 1px solid #d7d7db;
 	margin: 0;
 	max-height: calc(100% - 40px);
