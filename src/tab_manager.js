@@ -11,6 +11,7 @@
 		}
 		// other settings
 		autoClose = res.autoClose;
+		thresholdConfirmClosing = res.thresholdConfirmClosing || 2;
 		activeTabId = res.activeTabId;
 		savedTabs = res.tabs;
 		browser.tabs.query({}).then(_tabs => {
@@ -48,6 +49,7 @@
 	let recent = {};
 	let touchmoved = false;
 	let autoClose;
+	let thresholdConfirmClosing;
 
 	// DOM cache ---------------------
 	const tabs = []; // <li>
@@ -66,34 +68,40 @@
 		tabs.splice(tabs.indexOf(li), 1);
 		browser.tabs.remove(tabId(li));
 		li.classList.add('removing');
-		window.setTimeout(() => { li.parentNode.removeChild(li); }, COLLAPSE_MSEC);
+		setTimeout(() => { li.parentNode.removeChild(li); }, COLLAPSE_MSEC);
 		if (autoClose) {
-			closeIfThereAreNotabsLazy();
+			quitIfThereAreNotabsLazy();
 		}
 	};
 
-	const removeTabs = tabs => {
-		if (tabs.length < 1) {
+	const removeTabs = async tabs => {
+		if (tabs.length === 0) {
 			return;
 		}
-		if (tabs.length == 1) {
-			remove(tabs[0]);
-			return;
+		if (thresholdConfirmClosing <= tabs.length) {
+			const msg = chrome.i18n.getMessage('closeNTabs').replace('${count}', tabs.length);
+			const okGo = await modal.popupConfirm(msg);
+			if (!okGo) return;
 		}
-		const msg = chrome.i18n.getMessage('closeNTabs').replace('${count}', tabs.length);
-		modal.popupConfirm(msg, () => {
-			for (let i = tabs.length - 1; 0 <= i; i--) {
-				remove(tabs[i]);
-			}
-		});
+		for (let i = tabs.length - 1; 0 <= i; i--) {
+			remove(tabs[i]);
+		}
 	};
 
-	let closeTimer = null;
-	const closeIfThereAreNotabsLazy = () => {
-		window.clearTimeout(closeTimer);
-		closeTimer = window.setTimeout(closeIfThereAreNotabs , CLOSE_WAIT_MSEC);
+	const removeIf = async filter => {
+		let list = [];
+		for (let tab of [].concat(tabs)) {
+			if (filter(tab)) list.push(tab);
+		}
+		removeTabs(list);
 	};
-	const closeIfThereAreNotabs = () => {
+
+	let quitTimer = null;
+	const quitIfThereAreNotabsLazy = () => {
+		clearTimeout(quitTimer);
+		quitTimer = setTimeout(quitIfThereAreNotabs , CLOSE_WAIT_MSEC);
+	};
+	const quitIfThereAreNotabs = () => {
 		if (!tabs.length) {
 			browser.tabs.remove(TAB_MANAGER_ID);
 		}
@@ -126,7 +134,7 @@
 			floater.setPosition((floater.dx < 0 ? -1 : 1) * window.innerWidth, floater.dy);
 			let target = floater.tab;
 			floater.tab = null;
-			window.setTimeout(() => {
+			setTimeout(() => {
 				remove(target);
 				target = null;
 				floater.end();
@@ -151,21 +159,13 @@
 			}
 		},
 		closeSelectedTabs: () => {
-			let list = [];
-			for (let tab of [].concat(tabs)) {
-				if (checked(tab)) list.push(tab);
-			}
-			removeTabs(list);
+			removeIf(tab => checked(tab));
 		},
 		closeAllTabs: () => {
 			removeTabs(tabs);
 		},
 		closeUnselectedTabs: () => {
-			let list = [];
-			for (let tab of [].concat(tabs)) {
-				if (!checked(tab)) list.push(tab);
-			}
-			removeTabs(list);
+			removeIf(tab => !checked(tab));
 		},
 		closeLeftTabs: () => {
 			let list = [];
@@ -229,27 +229,25 @@
 			recentList.appendChild(items);
 			modal.show(recentList);
 		},
-		popupConfirm: async (text, func) => {
+		popupConfirm: async text => {
 			byId('confirmMessage').textContent = text;
-			byId('ok').onclick = func;
-			byId('cancel').onclick = modal.close;
 			modal.show(confirmDlg);
+			modal.setConfirmResult(false); // cancel the before confirm.
+			return new Promise(resolve => { modal.setConfirmResult = resolve; });
 		},
-		close: () => {
+		setConfirmResult: b => {},
+		close: sender => {
 			if (!modal.popuped) return;
 			modal.popuped = false;
 			modal.div.classList.remove('popuped');
+			modal.setConfirmResult(sender && sender.target && sender.target.id === 'ok');
 		},
 		// actions --------------------
 		closeThisTab: () => {
 			remove(modal.tab);
 		},
 		closeOtherTabs: () => {
-			if (tabs.length <= 1) return;
-			for (let tab of [].concat(tabs)) {
-				if (tab === modal.tab) continue;
-				remove(tab);
-			}
+			removeIf(tab => tab !== modal.tab);
 		},
 		cloneThisTab: () => {
 			if (browser.tabs.duplicate) {
@@ -260,17 +258,21 @@
 			browser.tabs.remove(TAB_MANAGER_ID);
 		},
 		closeLeftTabsFromThis: () => {
+			let list = [];
 			for (let tab of [].concat(tabs)) {
-				if (tab === modal.tab) return;
-				remove(tab);
+				if (tab === modal.tab) break;
+				list.push(tab);
 			}
+			removeTabs(list);
 		},
 		closeRightTabsFromThis: () => {
+			let list = [];
 			for (let i = tabs.length - 1; 0 <= i; i --) {
 				const tab = tabs[i];
-				if (tab === modal.tab) return;
-				remove(tab);
+				if (tab === modal.tab) break;
+				list.push(tab);
 			}
+			removeTabs(list);
 		},
 		titleAndUrl: tab => {
 			return byClass(tab, 'title').textContent + '\n' + byClass(tab, 'url').textContent + '\n';
@@ -329,7 +331,7 @@
 		}
 		if (tabs.length) {
 			tabList.scrollTo(0, byClass(tabList, 'tab').offsetTop);
-			activeTab && window.setTimeout(() => { activeTab.scrollIntoView(); });
+			activeTab && setTimeout(() => { activeTab.scrollIntoView(); });
 		}
 	};
 
@@ -344,7 +346,7 @@
 	}
 
 	window.addEventListener('click', e => {
-		modal.close();
+		modal.close(e);
 		if (e.target.classList.contains('menuitem')) {
 			modal[e.target.id]();
 			e.preventDefault();

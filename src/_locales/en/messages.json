@@ -32,10 +32,10 @@
 		"message": "Clone this tab"
 	},
 	"closeLeftTabsFromThis": {
-		"message": "Close left(upper) tabs"
+		"message": "Close upper(left) tabs"
 	},
 	"closeRightTabsFromThis": {
-		"message": "Close right(lower) tabs"
+		"message": "Close lower(right) tabs"
 	},
 	"copyTitleAndUrl": {
 		"message": "Copy title and URL"
@@ -51,6 +51,9 @@
 	},
 	"Close Tab-manager when all tabs are closed.": {
 		"message": "Close Tab-manager when all tabs are closed."
+	},
+	"Confirm when closing multiple tabs.": {
+		"message": "Confirm when closing multiple tabs."
 	},
 	"Theme": {
 		"message": "Theme"

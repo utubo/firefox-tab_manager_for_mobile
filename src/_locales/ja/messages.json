@@ -32,10 +32,10 @@
 		"message": "タブを複製する"
 	},
 	"closeLeftTabsFromThis": {
-		"message": "左側(上側)のタブを閉じる"
+		"message": "上側(左側)のタブを閉じる"
 	},
 	"closeRightTabsFromThis": {
-		"message": "右側(下側)のタブを閉じる"
+		"message": "下側(右側)のタブを閉じる"
 	},
 	"copyTitleAndUrl": {
 		"message": "タイトルとURLをコピーする"
@@ -51,6 +51,9 @@
 	},
 	"Close Tab-manager when all tabs are closed.": {
 		"message": "全てのタブを閉じたらタブマネージャも閉じる"
+	},
+	"Confirm when closing multiple tabs.": {
+		"message": "複数のタブを閉じるときは確認する"
 	},
 	"Theme": {
 		"message": "テーマ"
