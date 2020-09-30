@@ -22,7 +22,10 @@ body {
 	color: #999;
 }
 .toolbar {
-	background: #eee;
+	background: #222;
+}
+.tool-button {
+	filter: brightness(180%);
 }
 #floater {
 	background: #444;
