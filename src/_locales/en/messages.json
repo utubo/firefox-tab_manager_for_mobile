@@ -7,6 +7,9 @@
 		"message": "This adds Tab-Manager page.",
 		"description": "Description of the extension."
 	},
+	"settings": {
+		"message": "Settings"
+	},
 	"reloadSelectedTabs": {
 		"message": "Reload checked tabs"
 	},
@@ -54,6 +57,9 @@
 	},
 	"Confirm when closing multiple tabs.": {
 		"message": "Confirm when closing multiple tabs."
+	},
+	"List discarded tabs.": {
+		"message": "List discarded tabs. (*External)"
 	},
 	"Theme": {
 		"message": "Theme"

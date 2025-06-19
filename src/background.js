@@ -5,7 +5,8 @@ const KEY_AND_DEFAULT_VALUES = {
 	theme: 'default',
 	css: '',
 	autoClose: false,
-	thresholdConfirmClosing: 2
+	thresholdConfirmClosing: 2,
+	listDiscardedTabs: false
 };
 
 var ini = ini || JSON.parse(JSON.stringify(KEY_AND_DEFAULT_VALUES));
@@ -15,14 +16,14 @@ var ini = ini || JSON.parse(JSON.stringify(KEY_AND_DEFAULT_VALUES));
 
 	const TAB_MANAGER_URL = chrome.extension.getURL('tab_manager.html');
 	const RECENT_MAX_COUNT = 20;
-	let pageActionClicked;
+	let browserActionClicked;
 
 	const openiniagerPage = () => {
-		pageActionClicked = true;
+		browserActionClicked = true;
 		browser.tabs.create({ url: TAB_MANAGER_URL, active: true });
 	};
 
-	browser.pageAction.onClicked.addListener(openiniagerPage);
+	browser.browserAction.onClicked.addListener(openiniagerPage);
 
 	browser.runtime.onMessage.addListener((req, sender, res) => {
 		let arg = {};
@@ -31,7 +32,7 @@ var ini = ini || JSON.parse(JSON.stringify(KEY_AND_DEFAULT_VALUES));
 			req = arg.command;
 		}
 		if (req === 'updateIni') {
-			let oldTheme = ini.theme;
+			const oldTheme = ini.theme;
 			for (let key in arg.updateParams) {
 				ini[key] = arg.updateParams[key];
 			}
@@ -50,7 +51,7 @@ var ini = ini || JSON.parse(JSON.stringify(KEY_AND_DEFAULT_VALUES));
 	};
 
 	const loadIni = async () => {
-		let res = await browser.storage.local.get('tab_manager');
+		const res = await browser.storage.local.get('tab_manager');
 		if (!res) return;
 		if (!res.tab_manager) return;
 		for (let key in KEY_AND_DEFAULT_VALUES) {
@@ -62,16 +63,18 @@ var ini = ini || JSON.parse(JSON.stringify(KEY_AND_DEFAULT_VALUES));
 	const refleshTabs = async () => {
 		const tabs = await browser.tabs.query({});
 		const newTabs = {};
-		let index = -1;
 		for (let tab of tabs) {
-			index ++;
 			if (!tab.title && tab.url === 'about:blank' && ini.tabs[tab.id]) {
 				newTabs[tab.id] = ini.tabs[tab.id];
 			} else {
 				newTabs[tab.id] = { title: tab.title, url: tab.url };
 			}
 		}
-		ini.tabs = newTabs;
+		if (ini.listDiscardedTabs) {
+			Object.assign(ini.tabs, newTabs);
+		} else {
+			ini.tabs = newTabs;
+		}
 		saveIni();
 	};
 	let refleshTabsTimer;
@@ -86,7 +89,7 @@ var ini = ini || JSON.parse(JSON.stringify(KEY_AND_DEFAULT_VALUES));
 		saveIniTimer = setTimeout(saveIni, 300);
 	};
 	const applyNewTabInfo = (id, info, tab) => {
-		let t = ini.tabs[id] || {};
+		const t = ini.tabs[id] || {};
 		t.url = tab.url;
 		t.title = tab.title;
 		ini.tabs[id] = t;
@@ -98,7 +101,6 @@ var ini = ini || JSON.parse(JSON.stringify(KEY_AND_DEFAULT_VALUES));
 	browser.tabs.onRemoved.addListener(refleshTabsLezy);
 
 	browser.tabs.onCreated.addListener(tab => {
-		browser.pageAction.show(tab.id);
 		refleshTabsLezy(tab.id, null, tab);
 	});
 
@@ -121,23 +123,16 @@ var ini = ini || JSON.parse(JSON.stringify(KEY_AND_DEFAULT_VALUES));
 
 	// keep last activate --------------
 	browser.tabs.onActivated.addListener(info => {
-		if (pageActionClicked) {
-			pageActionClicked = false;
+		if (browserActionClicked) {
+			browserActionClicked = false;
 			return;
 		}
-		browser.tabs.get(info.tabId).then(tab => {
-			if (tab.url !== TAB_MANAGER_URL) {
-				ini.activeTabId = tab.id;
-				browser.pageAction.show(tab.id);
-			}
-		});
 	});
 
 	// START HERE ! -------------------
 	loadIni();
 	browser.tabs.query({active: true, currentWindow: true}).then(tabs => {
 		ini.activeTabId = tabs[0].id;
-		browser.pageAction.show(tabs[0].id);
 	});
 })();
 
