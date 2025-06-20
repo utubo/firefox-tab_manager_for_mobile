@@ -123,11 +123,7 @@ var ini = ini || JSON.parse(JSON.stringify(KEY_AND_DEFAULT_VALUES));
 	});
 
 	// keep last activate --------------
-	browser.tabs.onActivated.addListener(info => {
-		if (browserActionClicked) {
-			browserActionClicked = false;
-			return;
-		}
+	browser.tabs.onActivated.addListener(async info => {
 		browser.tabs.get(info.tabId).then(tab => {
 			if (tab.url !== TAB_MANAGER_URL) {
 				ini.activeTabId = tab.id;
