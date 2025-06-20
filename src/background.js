@@ -10,14 +10,13 @@ const KEY_AND_DEFAULT_VALUES = {
 	version: '1.17.2'
 };
 
-var ini = ini || JSON.parse(JSON.stringify(KEY_AND_DEFAULT_VALUES));
-
 (() => {
 	'use strict';
 
 	const TAB_MANAGER_URL = chrome.extension.getURL('tab_manager.html');
 	const RECENT_MAX_COUNT = 20;
 	let browserActionClicked;
+	let ini = {};
 
 	const openiniagerPage = () => {
 		browserActionClicked = true;
@@ -26,7 +25,7 @@ var ini = ini || JSON.parse(JSON.stringify(KEY_AND_DEFAULT_VALUES));
 
 	browser.browserAction.onClicked.addListener(openiniagerPage);
 
-	browser.runtime.onMessage.addListener((req, sender, res) => {
+	browser.runtime.onMessage.addListener(async (req, sender, res) => {
 		let arg = {};
 		if (req[0] === '{') {
 			arg = JSON.parse(req);
@@ -43,6 +42,7 @@ var ini = ini || JSON.parse(JSON.stringify(KEY_AND_DEFAULT_VALUES));
 				}
 			});
 		} else {
+			ini.activeTabId = await browser.storage.session.get('activeTabId').activeTabId;
 			res(ini);
 		}
 	});
@@ -89,7 +89,8 @@ var ini = ini || JSON.parse(JSON.stringify(KEY_AND_DEFAULT_VALUES));
 		clearTimeout(saveIniTimer);
 		saveIniTimer = setTimeout(saveIni, 300);
 	};
-	const applyNewTabInfo = (id, info, tab) => {
+
+	const applyNewTabInfo = (id, _, tab) => {
 		const t = ini.tabs[id] || {};
 		t.url = tab.url;
 		t.title = tab.title;
@@ -124,17 +125,16 @@ var ini = ini || JSON.parse(JSON.stringify(KEY_AND_DEFAULT_VALUES));
 
 	// keep last activate --------------
 	browser.tabs.onActivated.addListener(async info => {
-		browser.tabs.get(info.tabId).then(tab => {
-			if (tab.url !== TAB_MANAGER_URL) {
-				ini.activeTabId = tab.id;
-			}
-		});
+		const tab = await browser.tabs.get(info.tabId);
+		if (tab.url !== TAB_MANAGER_URL) {
+			browser.storage.session.set({ activeTabId: tab.id });
+		}
 	});
 
 	// START HERE ! -------------------
 	loadIni();
 	browser.tabs.query({active: true, currentWindow: true}).then(tabs => {
-		ini.activeTabId = tabs[0].id;
+		browser.storage.session.set({ activeTabId: tabs[0].id });
 	});
 })();
 
