@@ -6,7 +6,8 @@ const KEY_AND_DEFAULT_VALUES = {
 	css: '',
 	autoClose: false,
 	thresholdConfirmClosing: 2,
-	listDiscardedTabs: false
+	listDiscardedTabs: false,
+	version: '1.17.2'
 };
 
 var ini = ini || JSON.parse(JSON.stringify(KEY_AND_DEFAULT_VALUES));
@@ -105,7 +106,7 @@ var ini = ini || JSON.parse(JSON.stringify(KEY_AND_DEFAULT_VALUES));
 	});
 
 	// recent tabs ---------------------
-	browser.tabs.onRemoved.addListener((tabId, removeInfo) => {
+	browser.tabs.onRemoved.addListener((tabId, _) => {
 		const tab = ini.tabs[tabId];
 		if (!tab) return;
 		if (!tab.url) return;
@@ -127,6 +128,11 @@ var ini = ini || JSON.parse(JSON.stringify(KEY_AND_DEFAULT_VALUES));
 			browserActionClicked = false;
 			return;
 		}
+		browser.tabs.get(info.tabId).then(tab => {
+			if (tab.url !== TAB_MANAGER_URL) {
+				ini.activeTabId = tab.id;
+			}
+		});
 	});
 
 	// START HERE ! -------------------
