@@ -1,11 +1,12 @@
 (async () => {
 	'use strict';
 
-	let theme = document.getElementById('theme');
-	let css = document.getElementById('css');
-	let autoClose = document.getElementById('autoClose');
-	let thresholdConfirmClosing = document.getElementById('thresholdConfirmClosing');
-	let NO_CONFIRM = 99999;
+	const theme = document.getElementById('theme');
+	const css = document.getElementById('css');
+	const autoClose = document.getElementById('autoClose');
+	const thresholdConfirmClosing = document.getElementById('thresholdConfirmClosing');
+	const listDiscardedTabs = document.getElementById('listDiscardedTabs');
+	const NO_CONFIRM = 99999;
 
 	const saveOptions = async () => {
 		let msg = {
@@ -14,10 +15,11 @@
 				'theme': theme.value,
 				'css': css.value,
 				'autoClose': autoClose.checked,
-				'thresholdConfirmClosing': thresholdConfirmClosing.checked ? 2 : NO_CONFIRM
+				'thresholdConfirmClosing': thresholdConfirmClosing.checked ? 2 : NO_CONFIRM,
+				'listDiscardedTabs': listDiscardedTabs.checked,
 			}
 		};
-		let ini = await browser.runtime.sendMessage(JSON.stringify(msg));
+		await browser.runtime.sendMessage(JSON.stringify(msg));
 	};
 
 	let saveTimer;
@@ -27,12 +29,13 @@
 	};
 
 	const restoreOptions = async () => {
-		let ini = await browser.runtime.sendMessage('loadIni');
+		const ini = await browser.runtime.sendMessage('loadIni');
 		if (!ini) return;
 		theme.value = ini.theme || 'default';
 		css.value = ini.css || '';
 		autoClose.checked = ini.autoClose;
 		thresholdConfirmClosing.checked = ini.thresholdConfirmClosing != NO_CONFIRM;
+		listDiscardedTabs.checked = ini.listDiscardedTabs;
 	};
 
 	for (let label of document.getElementsByTagName('LABEL')) {

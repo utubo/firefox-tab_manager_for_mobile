@@ -7,6 +7,9 @@
 		"message": "タブを管理するページを提供します",
 		"description": "Description of the extension."
 	},
+	"settings": {
+		"message": "設定"
+	},
 	"reloadSelectedTabs": {
 		"message": "選択したタブを再読み込みする"
 	},
@@ -54,6 +57,9 @@
 	},
 	"Confirm when closing multiple tabs.": {
 		"message": "複数のタブを閉じるときは確認する"
+	},
+	"List discarded tabs.": {
+		"message": "破棄されたタブを含める(実験的)"
 	},
 	"Theme": {
 		"message": "テーマ"

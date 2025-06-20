@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "__MSG_extensionName__",
 	"description": "__MSG_extensionDescription__",
-	"version": "1.14.1",
+	"version": "1.16",
 	"default_locale": "en",
 	"icons": {
 		"32": "icons/tabManager.png"
@@ -15,7 +15,7 @@
 		}
 	},
 
-	"page_action": {
+	"browser_action": {
 		"default_icon": "icons/tabManager.png",
 		"default_title": "Tab Manager"
 	},
@@ -25,7 +25,8 @@
 	},
 
 	"options_ui": {
-		"page": "options.html"
+		"page": "options.html",
+		"open_in_tab": true
 	},
 
 	"permissions": [
