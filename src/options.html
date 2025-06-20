@@ -13,7 +13,10 @@
 		</style>
 	</head>
 	<body class="browser-style">
-		<h4 class="browser-style">Bookmark <a href="tab_manager.html">HERE</a>.</h4>
+		<h4 class="browser-style">
+			<label>Bookmark</label>
+			<a href="tab_manager.html"><label>HERE</label></a>
+		</h4>
 		<h4 class="browser-style"><label>Settings</label></h4>
 		<form>
 		<div class="browser-style">
@@ -32,12 +35,14 @@
 				</tr>
 			</table>
 			<br>
-			<label for="theme">Theme</label><br>
-			<select id="theme" class="browser-style">
-				<option value="default">Default</option>
-				<option value="dark">Dark</option>
-			</select><br>
-			<br>
+			<!-- TODO -->
+			<div style="display: none">
+				<label for="theme">Theme</label><br>
+				<select id="theme" class="browser-style">
+					<option value="default">Default</option>
+				</select><br>
+				<br>
+			</div>
 			<label for="css">Style sheet</label><br>
 			<textarea id="css" class="browser-style"></textarea>
 		</div>

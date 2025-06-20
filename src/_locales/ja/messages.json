@@ -52,6 +52,12 @@
 	"closeNTabs": {
 		"message": "${count} 個のタブを閉じます"
 	},
+	"Bookmark": {
+		"message": "ここをブックマークすると便利です→"
+	},
+	"HERE": {
+		"message": "HERE"
+	},
 	"Close Tab-manager when all tabs are closed.": {
 		"message": "全てのタブを閉じたらタブマネージャも閉じる"
 	},
