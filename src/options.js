@@ -12,11 +12,11 @@
 		let msg = {
 			command: 'updateIni',
 			updateParams: {
-				'theme': theme.value,
-				'css': css.value,
-				'autoClose': autoClose.checked,
-				'thresholdConfirmClosing': thresholdConfirmClosing.checked ? 2 : NO_CONFIRM,
-				'listDiscardedTabs': listDiscardedTabs.checked,
+				theme: theme.value,
+				css: css.value,
+				autoClose: autoClose.checked,
+				thresholdConfirmClosing: thresholdConfirmClosing.checked ? 2 : NO_CONFIRM,
+				listDiscardedTabs: listDiscardedTabs.checked,
 			}
 		};
 		await browser.runtime.sendMessage(JSON.stringify(msg));
