@@ -19,7 +19,7 @@ body {
 	overflow: hidden;
 }
 #cover {
-	background: ver(--layer1);
+	background: var(--layer1);
 	height: 100vh;
 	left: 0;
 	pointer-events: none;
@@ -47,28 +47,35 @@ body {
 	user-select: none;
 	width: 100%;
 }
-.float-target {
-	z-index: 1;
-}
-.float-target-parent {
-	overflow-y: hidden; /* 'e.preventDefault()' does not work. */
-}
 .tablist-margin-top {
 	height: calc(100vh - 40px - 4em);
 }
 .tab {
 	background: var(--layer1);
 	border-top: 1px solid;
-	border-color: var(--border);
+	border-top-color: var(--border);
+	border-left: 1px solid transparent;
+	border-right: 1px solid transparent;
+	border-radius: 0;
 	box-sizing: border-box;
 	display: block;
 	height: 4em;
 	padding: 0 1em;
 	position: relative;
+	transition: .7s border,border-radius;
+}
+.float-target {
+	z-index: 1;
+	border-left-color: var(--border);
+	border-right-color: var(--border);
+	border-radius: .5rem;
+}
+.float-target-parent {
+	overflow-y: hidden; /* 'e.preventDefault()' does not work. */
 }
 .active {
 	border-left: 4px solid;
-	border-color: var(--accent);
+	border-left-color: var(--accent);
 }
 .title,
 .url {
@@ -284,6 +291,7 @@ body {
 		--layer1-transpalent: #2b2a3399;
 		--layer2: #42414d;
 		--layer3: #1c1b22;
+		--border: #45444c;
 		--caption: #fbfbfecc;
 		--primary: #52525e;
 		--secondery: rgba(251,251,254,0.4);

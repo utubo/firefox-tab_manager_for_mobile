@@ -14,7 +14,6 @@ const KEY_AND_DEFAULT_VALUES = {
 const TAB_MANAGER_URL = chrome.extension.getURL('tab_manager.html');
 const RECENT_MAX_COUNT = 20;
 let ini = {};
-let activeTabId = (await browser.storage.session.get('activeTabId')).activeTabId;
 
 const openiniagerPage = () => {
 	browser.tabs.create({ url: TAB_MANAGER_URL, active: true });
@@ -22,7 +21,7 @@ const openiniagerPage = () => {
 
 browser.browserAction.onClicked.addListener(openiniagerPage);
 
-browser.runtime.onMessage.addListener((req, _, res) => {
+const messageHandler = async (req, _, res) => {
 	let arg = {};
 	if (req[0] === '{') {
 		arg = JSON.parse(req);
@@ -39,10 +38,16 @@ browser.runtime.onMessage.addListener((req, _, res) => {
 			}
 		});
 	} else {
-		ini.activeTabId = activeTabId;
+		const a = await browser.storage.session.get('activeTabId');
+		ini.activeTabId = a.activeTabId;
 		res(ini);
 	}
 };
+
+browser.runtime.onMessage.addListener((req, sender, res) => {
+	messageHandler(req, sender, res);
+	return true;
+});
 
 const saveIni = async () => {
 	await browser.storage.local.set({ 'tab_manager': ini });
@@ -88,11 +93,14 @@ const saveIniLezy = () => {
 };
 
 const applyNewTabInfo = (id, _, tab) => {
-	const t = ini.tabs[id] || {};
+	const t = ini.tabs?.[id] || {};
 	t.url = tab.url;
 	t.title = tab.title;
 	ini.tabs[id] = t;
 	saveIniLezy();
+	if (tab.active && tab.status === 'complete' && tab.url !== TAB_MANAGER_URL) {
+		setActiveTabId(tab.id);
+	}
 };
 
 browser.tabs.onUpdated.addListener(applyNewTabInfo);
@@ -122,13 +130,12 @@ browser.tabs.onRemoved.addListener((tabId, _) => {
 
 // keep last activate --------------
 const setActiveTabId = id => {
-	activeTabId = id;
 	browser.storage.session.set({ activeTabId: id });
 };
 
 browser.tabs.onActivated.addListener(async info => {
 	const tab = await browser.tabs.get(info.tabId);
-	if (tab.url !== TAB_MANAGER_URL) {
+	if (tab.url && tab.url !== 'about:blank' && tab.url !== TAB_MANAGER_URL) {
 		setActiveTabId(tab.id);
 	}
 });
