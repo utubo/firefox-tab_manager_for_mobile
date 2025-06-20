@@ -1,22 +1,24 @@
 :root {
-	--fg-color: #15141a;
-	--bg-color: #f9f9fa;
-	--bg-color-transpalent: #f9f9fa99;
+	--text: #15141a;
+	--layer1: #f9f9fa;
+	--layer1-transpalent: #f9f9fa99;
+	--layer2: #fff;
+	--layer3: #f0f0f4;
 	--caption: #0c0c0d;
 	--accent: #f90;
-	--secondery: #666;
-	--face: #cfcfd8;
+	--primary: #cfcfd8;
+	--secondery: rgba(21,20,26,0.4);
 }
 body {
-	background: var(--face);
+	background: var(--layer3);
 	box-sizing: border-box;
-	color: var(--fg-color);
+	color: var(--text);
 	margin: 0;
 	width: 100vw;
 	overflow: hidden;
 }
 #cover {
-	background: #fff;
+	background: ver(--layer1);
 	height: 100vh;
 	left: 0;
 	pointer-events: none;
@@ -33,7 +35,7 @@ body {
 .tab-list {
 	display: block;
 	background: transparent;
-	border-top: 1px solid var(--face);
+	border-top: 1px solid var(--primary);
 	margin: 0;
 	max-height: calc(100% - 40px);
 	overflow-x: hidden;
@@ -55,8 +57,8 @@ body {
 	height: calc(100vh - 40px - 4em);
 }
 .tab {
-	background: var(--bg-color);
-	border-bottom: 1px solid var(--face);
+	background: var(--layer1);
+	border-bottom: 1px solid var(--primary);
 	box-sizing: border-box;
 	display: block;
 	height: 4em;
@@ -101,7 +103,7 @@ body {
 	background-image: url(../icons/checked.svg);
 }
 .toolbar {
-	background: var(--face);
+	background: var(--layer2);
 	bottom: 0;
 	box-sizing: border-box;
 	display: flex;
@@ -158,9 +160,9 @@ body {
 	pointer-events: auto;
 }
 .menuitem-container {
-	background: var(--bg-color);
+	background: var(--layer1);
 	border-radius: 2px;
-	color: var(--fg-color);
+	color: var(--text);
 	max-height: 88vh;
 	max-width: 88vw;
 	overflow-y: auto;
@@ -185,7 +187,7 @@ body {
 	padding: 0 0 14px 14px;
 }
 .menuitem {
-	border-bottom: 1px solid var(--face);
+	border-bottom: 1px solid var(--primary);
 	max-width: 100%;
 	padding: 14px 14px 14px 60px;
 	position: relative;
@@ -211,7 +213,7 @@ body {
 	max-width: 100%;
 }
 .recentlist-title::before {
-	background: var(--bg-color-transpalent);
+	background: var(--layer1-transpalent);
 	box-sizing: border-box;
 	color: var(--caption);
 	content: '__MSG_recentTabs__';
@@ -226,7 +228,7 @@ body {
 	overflow-y: auto;
 }
 .recent {
-	border-bottom: 1px solid var(--face);
+	border-bottom: 1px solid var(--primary);
 	max-width: 100%;
 	padding: 0 14px 14px 14px;
 	position: relative;
@@ -235,6 +237,7 @@ body {
 	border: none;
 }
 .confirm {
+	background: var(--layer2);
 	border-radius: .5rem;
 	max-height: 100%;
 	max-width: 100%;
@@ -267,11 +270,14 @@ body {
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--fg-color: #fbfbfe;
-		--bg-color: #2b2a33;
+		--text: #fbfbfe;
+		--layer1: #2b2a33;
+		--layer1-transpalent: #2b2a3399;
+		--layer2: #42414d;
+		--layer3: #1c1b22;
 		--caption: #fbfbfecc;
-		--secondery: #fbfbfeaa;
-		--face: #52525e;
+		--primary: #52525e;
+		--secondery: rgba(251,251,254,0.4);
 	}
 	.tool-button {
 		filter: brightness(180%);
@@ -279,62 +285,4 @@ body {
 	.menuitem::before {
 		filter: brightness(200%);
 	}
-	/*
-	body {
-		background: #666;
-		color: #f9f9fa;
-	}
-	#cover {
-		background: #666;
-	}
-	.tab-list {
-		border-color: #666;
-	}
-	.tab {
-		background: #444;
-		border-color: #666;
-	}
-	.active {
-		border-left: 4px solid #f90;
-	}
-	#floater {
-		border-color: #666;
-	}
-	.title {
-		color: #eee;
-	}
-	.url {
-		color: #999;
-	}
-	.toolbar {
-		background: #222;
-	}
-	#floater {
-		background: #444;
-	}
-	.menuitem-container {
-		background: #444;
-		color: #eee;
-	}
-	.menu-title,
-	.menu-title {
-		color: #eee;
-	}
-	.menu-url {
-		color: #999;
-	}
-	.menuitem {
-		color: #eee;
-		border-color: #666;
-	}
-	.recentlist-title {
-	}
-	.recentlist-title::before {
-		background: #4449;
-		color: #eee;
-	}
-	.recent {
-		border-color: #666;
-	}
-	*/
 }
